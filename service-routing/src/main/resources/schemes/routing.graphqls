@@ -1,0 +1,14 @@
+schema {
+    query: QueryType
+}
+
+type QueryType {
+    route(start: CoordinateInput!, finish: CoordinateInput!): RouteType
+    geocode(name: String!) : CoordinateType
+}
+
+type RouteType {
+    time: Int,
+    distance: Int,
+    waypoints: [CoordinateType]
+}

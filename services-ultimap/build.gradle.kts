@@ -18,9 +18,6 @@ subprojects {
         extensions.configure(JavaPluginExtension::class.java) {
             sourceCompatibility = JavaVersion.VERSION_11
             targetCompatibility = JavaVersion.VERSION_11
-
-            withSourcesJar()
-            withJavadocJar()
         }
 
         tasks.withType(Test::class.java) {

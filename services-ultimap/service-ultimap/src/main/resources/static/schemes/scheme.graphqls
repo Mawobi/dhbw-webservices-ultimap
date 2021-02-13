@@ -18,12 +18,12 @@ enum FuelType {
 
 ## Input Types
 input UltimapInput {
-    geopoints: GeoInput # Start and endpoint
+    geopoints: DestinationInput # Start and endpoint
     departure : Int     # UNIX Timestamp
     fuel: FuelInput     # Information for fuelage
 }
 
-input GeoInput {
+input DestinationInput {
     start: String   # Either address or coordinates like (59.0,14.9); Format like (lat,lon)
     finish: String  # Either address or coordinates like (59.0,14.9)
 }

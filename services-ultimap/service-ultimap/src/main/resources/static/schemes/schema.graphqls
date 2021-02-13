@@ -18,14 +18,14 @@ enum FuelType {
 
 ## Input Types
 input UltimapInput {
-    geopoints: DestinationInput # Start and endpoint
+    geopoints: GeoInput # Start and endpoint
     departure : Int     # UNIX Timestamp
     fuel: FuelInput     # Information for fuelage
 }
 
-input DestinationInput {
+input GeoInput {
     start: String   # Either address or coordinates like (59.0,14.9); Format like (lat,lon)
-    finish: String  # Either address or coordinates like (59.0,14.9)
+    destination: String  # Either address or coordinates like (59.0,14.9)
 }
 
 input FuelInput {
@@ -53,8 +53,8 @@ type CoordinateType {
 
 type CarCostInfoType {
     totalConsumption: Float # Estimated fuel consumption in litres
-    fuelCosts: Float        # Estimated costs for fuel
-    wearFlatrate: Float     # Estimated costs for general car wear
+    fuelCosts: Float        # Estimated costs for fuel in EUR
+    wearFlatrate: Float     # Estimated costs for general car wear in EUR
 }
 
 type WeatherInfoType {

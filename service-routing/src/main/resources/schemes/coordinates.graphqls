@@ -1,9 +1,0 @@
-input CoordinateInput {
-    lon: Float!,
-    lat: Float!
-}
-
-type CoordinateType {
-    lon: Float!,
-    lat: Float!
-}

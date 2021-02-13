@@ -1,0 +1,15 @@
+.service:
+  image: openjdk:15
+  before_script:
+    - cd services-ultimap
+    - chmod +x ./gradlew
+  cache:
+    key: services-ultimap
+    paths:
+      - services-ultimap/.gradle
+
+include:
+  - local: services-ultimap/service-carinfo/carinfo-ci.yml
+  - local: services-ultimap/service-routing/routing-ci.yml
+  - local: services-ultimap/service-ultimap/ultimap-ci.yml
+  - local: services-ultimap/service-weather/weather-ci.yml

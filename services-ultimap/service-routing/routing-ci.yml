@@ -1,0 +1,32 @@
+build-service-routing:
+  stage: build
+  script:
+    - ./gradlew service-routing:bootJar
+  artifacts:
+    paths:
+      - services-ultimap/service-routing/build
+  extends: .service
+
+test-service-routing:
+  stage: test
+  script:
+    - ./gradlew service-routing:check
+  artifacts:
+    paths:
+      - services-ultimap/service-routing/build/reports/*
+    reports:
+      junit: services-ultimap/service-routing/build/test-results/test/**/TEST-*.xml
+  extends: .service
+
+dockerize-service-routing:
+  stage: dockerize
+  image: docker:20
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD registry.gitlab.com
+    - docker build -t registry.gitlab.com/kiliankra/dhbw_webservices_ultimap/service-routing:latest -f Dockerfile service-routing
+    - docker tag registry.gitlab.com/kiliankra/dhbw_webservices_ultimap/service-routing:latest registry.gitlab.com/kiliankra/dhbw_webservices_ultimap/service-routing:${CI_COMMIT_SHORT_SHA}
+    - docker push registry.gitlab.com/kiliankra/dhbw_webservices_ultimap/service-routing:latest
+    - docker push registry.gitlab.com/kiliankra/dhbw_webservices_ultimap/service-routing:${CI_COMMIT_SHORT_SHA}
+  extends:
+    - .service
+    - .deployment

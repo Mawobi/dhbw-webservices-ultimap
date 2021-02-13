@@ -1,0 +1,32 @@
+build-service-ultimap:
+  stage: build
+  script:
+    - ./gradlew service-ultimap:bootJar
+  artifacts:
+    paths:
+      - services-ultimap/service-ultimap/build
+  extends: .service
+
+test-service-ultimap:
+  stage: test
+  script:
+    - ./gradlew service-ultimap:check
+  artifacts:
+    paths:
+      - services-ultimap/service-ultimap/build/reports/*
+    reports:
+      junit: services-ultimap/service-ultimap/build/test-results/test/**/TEST-*.xml
+  extends: .service
+
+dockerize-service-ultimap:
+  stage: dockerize
+  image: docker:20
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD registry.gitlab.com
+    - docker build -t registry.gitlab.com/kiliankra/dhbw_webservices_ultimap/service-ultimap:latest -f Dockerfile service-ultimap
+    - docker tag registry.gitlab.com/kiliankra/dhbw_webservices_ultimap/service-ultimap:latest registry.gitlab.com/kiliankra/dhbw_webservices_ultimap/service-ultimap:${CI_COMMIT_SHORT_SHA}
+    - docker push registry.gitlab.com/kiliankra/dhbw_webservices_ultimap/service-ultimap:latest
+    - docker push registry.gitlab.com/kiliankra/dhbw_webservices_ultimap/service-ultimap:${CI_COMMIT_SHORT_SHA}
+  extends:
+    - .service
+    - .deployment

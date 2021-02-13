@@ -1,0 +1,30 @@
+schema {
+    query: CarinfoQueryType
+}
+
+type CarinfoQueryType {
+    # Information for a single car by carId
+    car(carId: Int!): CarInfoType
+    # Current pricingInformation for a certain Type of Fuel
+    fuel(typ: FuelType!): FuelPriceType
+    # Information of all cars in the database
+    allCars: [CarInfoType]!
+}
+
+# The supported types of fuel
+enum FuelType {
+    DIESEL
+    BENZOL
+}
+
+## Return types
+type CarInfoType {
+    id: Int!,           # Incremental ID
+    name: String,       # Human readable name (e.g. "VW Golf 6 GTI")
+    consumption: Float, # Consumption in litres per 100 km
+    typ: FuelType       # Consumed Fuel type
+}
+
+type FuelPriceType {
+    price: Float!
+}

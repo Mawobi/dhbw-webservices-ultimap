@@ -1,0 +1,20 @@
+schema {
+    query: QueryType
+}
+
+type QueryType {
+    weather(coordinate: CoordinateInput): WeatherType
+}
+
+## input types
+input CoordinateInput {
+    lat: Float!,
+    lon: Float!
+}
+
+## return types
+type WeatherType {
+    temp: Float,    # Temperature in degrees of Celsius
+    rain: Float     # Amount of rain in mm/cm² #TODO: @Marcel: Evtl. muss die Einheit hier noch angepasst werden.
+}
+

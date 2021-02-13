@@ -59,9 +59,12 @@ subprojects {
                 add("testImplementation", "org.springframework.boot:spring-boot-starter-test")
 
                 // GraphQL & GraphiQL (UI)
-                add("implementation", "com.graphql-java:graphql-spring-boot-starter:5.0.2")
-                add("implementation", "com.graphql-java:graphiql-spring-boot-starter:5.0.2")
-                add("implementation", "com.graphql-java:graphql-java-tools:5.2.4")
+                val graphQlLibVersion = "11.0.0"
+                add("implementation", "com.graphql-java-kickstart:graphql-spring-boot-starter:$graphQlLibVersion")
+                add("implementation", "com.graphql-java-kickstart:graphiql-spring-boot-starter:$graphQlLibVersion")
+                add("implementation", "com.graphql-java-kickstart:graphql-java-tools:$graphQlLibVersion")
+
+                add("testImplementation", "com.graphql-java-kickstart:graphql-spring-boot-starter-test:$graphQlLibVersion")
 
                 // Lombok
                 add("compileOnly", "org.projectlombok:lombok")

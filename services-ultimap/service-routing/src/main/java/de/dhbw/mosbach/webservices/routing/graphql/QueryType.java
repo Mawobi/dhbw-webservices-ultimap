@@ -1,6 +1,6 @@
 package de.dhbw.mosbach.webservices.routing.graphql;
 
-import com.coxautodev.graphql.tools.GraphQLQueryResolver;
+import graphql.kickstart.tools.GraphQLQueryResolver;
 import org.springframework.stereotype.Service;
 
 @Service

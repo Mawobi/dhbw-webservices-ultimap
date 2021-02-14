@@ -26,7 +26,7 @@ fun addClientGenerationTask(client: String) {
     generationTask.generatedSourcesDir = "$buildDir/generated/dgs/client-$client/java"
     sourceSets.getByName("main").java.srcDir(generationTask.generatedSourcesDir + "/generated")
 
-    generationTask.schemaPaths = mutableListOf("$projectDir/src/main/resources/client/$client")
+    generationTask.schemaPaths = mutableListOf("$projectDir/src/main/resources/graphql/client/$client")
     generationTask.packageName = "de.dhbw.mosbach.webservices.ultimap.client.$client"
     generationTask.generateClient = true
 

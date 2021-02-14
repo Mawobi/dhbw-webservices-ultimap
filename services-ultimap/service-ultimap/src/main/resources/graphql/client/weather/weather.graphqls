@@ -1,5 +1,7 @@
 type Query {
-    weather(coordinate: CoordinateInput): WeatherType
+    # coordinate is to give the point to determine the weather at
+    # time is a UNIX Timestamp in seconds
+    weather(coordinate: CoordinateInput, timestamp: Int): WeatherType
 }
 
 ## input types
@@ -13,4 +15,3 @@ type WeatherType {
     temp: Float,    # Temperature in degrees of Celsius
     rain: Float     # Amount of rain in mm/cm² #TODO: @Marcel: Evtl. muss die Einheit hier noch angepasst werden.
 }
-

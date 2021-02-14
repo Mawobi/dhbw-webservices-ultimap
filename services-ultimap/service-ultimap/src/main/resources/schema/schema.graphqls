@@ -1,8 +1,4 @@
-schema {
-    query: UltimapQueryType
-}
-
-type UltimapQueryType {
+type Query {
     # Advanced information for the route
     routeInfo(input: UltimapInput): UltimapType
 

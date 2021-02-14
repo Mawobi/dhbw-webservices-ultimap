@@ -13,12 +13,12 @@ public class CarinfoDataFetcher {
     @Autowired
     private ICarinfoProvider carinfoProvider;
 
-    @DgsData(parentType = "UltimapQueryType", field = "carInfo")
+    @DgsData(parentType = "Query", field = "carInfo")
     public CarInfoType getCarInfo (int carId) {
         return carinfoProvider.getCar(carId);
     }
 
-    @DgsData(parentType = "UltimapQueryType", field = "carModels")
+    @DgsData(parentType = "Query", field = "carModels")
     public List<CarInfoType> getCarModels () {
         return carinfoProvider.getAllCars();
     }

@@ -12,7 +12,7 @@ import java.util.List;
 
 @DgsComponent
 public class CarInfoDataFetcher {
-    @DgsData(parentType = "CarinfoQueryType", field = "car")
+    @DgsData(parentType = "Query", field = "car")
     public CarInfoType getCar (int carId) {
         return new CarInfoType(
                 0,
@@ -22,12 +22,12 @@ public class CarInfoDataFetcher {
         );
     }
 
-    @DgsData(parentType = "CarinfoQueryType", field = "fuel")
+    @DgsData(parentType = "Query", field = "fuel")
     public FuelPriceType getFuel (FuelType typ) {
         return new FuelPriceType(1.449);
     }
 
-    @DgsData(parentType = "CarinfoQueryType", field = "allCars")
+    @DgsData(parentType = "Query", field = "allCars")
     public List<CarInfoType> getAllCars () {
         return Collections.singletonList(new CarInfoType(
                 0,

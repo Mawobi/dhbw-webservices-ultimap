@@ -2,8 +2,8 @@ import com.netflix.graphql.dgs.codegen.gradle.GenerateJavaTask
 
 plugins {
     java
-    kotlin("jvm") version "1.4.30"
-    kotlin("plugin.spring") version "1.4.30"
+    kotlin("jvm")
+    kotlin("plugin.spring")
     id("org.springframework.boot")
     id("io.spring.dependency-management")
     id("com.netflix.dgs.codegen")
@@ -21,14 +21,15 @@ dependencies {
 
 @OptIn(ExperimentalStdlibApi::class)
 fun addClientGenerationTask(client: String) {
-    val generationTask = tasks.create("generate${client.capitalize()}ClientSources", GenerateJavaTask::class.java)
+    val generationTask = tasks.create("generate${client.capitalize()}ClientSources", GenerateJavaTask::class.java) {
+        generatedSourcesDir = "$buildDir/generated/dgs/client-$client/java"
+        schemaPaths = mutableListOf("$projectDir/src/main/resources/graphql/client/$client")
+        packageName = "de.dhbw.mosbach.webservices.ultimap.client.$client"
+        generateClient = true
+        language = "JAVA"
+    }
 
-    generationTask.generatedSourcesDir = "$buildDir/generated/dgs/client-$client/java"
     sourceSets.getByName("main").java.srcDir(generationTask.generatedSourcesDir + "/generated")
-
-    generationTask.schemaPaths = mutableListOf("$projectDir/src/main/resources/graphql/client/$client")
-    generationTask.packageName = "de.dhbw.mosbach.webservices.ultimap.client.$client"
-    generationTask.generateClient = true
 
     tasks.compileJava.apply {
         get().dependsOn(generationTask)

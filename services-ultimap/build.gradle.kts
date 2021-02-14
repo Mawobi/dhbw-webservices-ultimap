@@ -1,8 +1,10 @@
+import com.netflix.graphql.dgs.codegen.gradle.GenerateJavaTask
 import org.springframework.boot.gradle.dsl.SpringBootExtension
 
 plugins {
     id("org.springframework.boot") version "2.4.2" apply false
     id("io.spring.dependency-management") version "1.0.11.RELEASE" apply false
+    id("com.netflix.dgs.codegen") version "4.0.10" apply false
 }
 
 allprojects {
@@ -12,6 +14,7 @@ allprojects {
 subprojects {
     repositories {
         mavenCentral()
+        jcenter()
     }
 
     pluginManager.withPlugin("java") {
@@ -58,18 +61,21 @@ subprojects {
 
                 add("testImplementation", "org.springframework.boot:spring-boot-starter-test")
 
-                // GraphQL & GraphiQL (UI)
-                val graphQlLibVersion = "11.0.0"
-                add("implementation", "com.graphql-java-kickstart:graphql-spring-boot-starter:$graphQlLibVersion")
-                add("implementation", "com.graphql-java-kickstart:graphiql-spring-boot-starter:$graphQlLibVersion")
-                add("implementation", "com.graphql-java-kickstart:graphql-java-tools:$graphQlLibVersion")
-
-                add("testImplementation", "com.graphql-java-kickstart:graphql-spring-boot-starter-test:$graphQlLibVersion")
+                // GraphQL
+                add("implementation", "com.netflix.graphql.dgs:graphql-dgs-spring-boot-starter:latest.release")
 
                 // Lombok
                 add("compileOnly", "org.projectlombok:lombok")
                 add("annotationProcessor", "org.projectlombok:lombok")
             }
+        }
+    }
+
+    pluginManager.withPlugin("com.netflix.dgs.codegen") {
+        @OptIn(ExperimentalStdlibApi::class)
+        tasks.withType(GenerateJavaTask::class.java) {
+            packageName = "de.dhbw.mosbach.webservices.ultimap.graphql.client"
+            generateClient = true
         }
     }
 }

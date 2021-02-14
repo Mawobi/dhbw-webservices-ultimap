@@ -19,7 +19,7 @@ enum FuelType {
 ## Input Types
 input UltimapInput {
     geopoints: GeoInput # Start and endpoint
-    departure : Int     # UNIX Timestamp
+    departure : Int     # UNIX Timestamp in seconds
     fuel: FuelInput     # Information for fuelage
 }
 

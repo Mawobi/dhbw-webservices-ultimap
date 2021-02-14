@@ -1,5 +1,11 @@
-type QueryType {
+type Query {
     weather(coordinate: CoordinateInput): WeatherType
+}
+
+## input types
+input CoordinateInput {
+    lat: Float!,
+    lon: Float!
 }
 
 ## return types

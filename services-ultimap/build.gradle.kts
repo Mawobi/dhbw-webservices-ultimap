@@ -72,10 +72,19 @@ subprojects {
     }
 
     pluginManager.withPlugin("com.netflix.dgs.codegen") {
+        // Workaround for bug in DGS-Generation Plugin
+        // The wrong generated Sources Dir is added, since the value of generatedSourcesDir in the Task is queried before this configuration is applied.
+        val javaSourceSet = extensions.getByType(SourceSetContainer::class.java).getByName("main").java
+
+        // Remove the wrong dir from sources and add the correct one
+        javaSourceSet.setSrcDirs(javaSourceSet.srcDirs.filter { !it.path.equals(File("$buildDir/generated").path) })
+        javaSourceSet.srcDir("$buildDir/generated/dgs/java/generated")
+
         @OptIn(ExperimentalStdlibApi::class)
-        tasks.withType(GenerateJavaTask::class.java) {
-            packageName = "de.dhbw.mosbach.webservices.ultimap.graphql.client"
-            generateClient = true
+        tasks.getByName<GenerateJavaTask>("generateJava") {
+            packageName = "de.dhbw.mosbach.webservices.ultimap.graphql"
+            generatedSourcesDir = "$buildDir/generated/dgs/java"
+            generateClient = false
         }
     }
 }

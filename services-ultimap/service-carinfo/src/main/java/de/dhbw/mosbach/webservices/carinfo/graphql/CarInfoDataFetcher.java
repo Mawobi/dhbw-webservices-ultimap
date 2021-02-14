@@ -3,9 +3,9 @@ package de.dhbw.mosbach.webservices.carinfo.graphql;
 
 import com.netflix.graphql.dgs.DgsComponent;
 import com.netflix.graphql.dgs.DgsData;
-import de.dhbw.mosbach.webservices.ultimap.graphql.client.types.CarInfoType;
-import de.dhbw.mosbach.webservices.ultimap.graphql.client.types.FuelPriceType;
-import de.dhbw.mosbach.webservices.ultimap.graphql.client.types.FuelType;
+import de.dhbw.mosbach.webservices.ultimap.graphql.types.CarInfoType;
+import de.dhbw.mosbach.webservices.ultimap.graphql.types.FuelPriceType;
+import de.dhbw.mosbach.webservices.ultimap.graphql.types.FuelType;
 
 import java.util.Collections;
 import java.util.List;

@@ -1,9 +1,8 @@
 package de.dhbw.mosbach.webservices.ultimap.external.carinfo;
 
-import de.dhbw.mosbach.webservices.ultimap.graphql.client.types.CarInfoType;
-import de.dhbw.mosbach.webservices.ultimap.graphql.client.types.CarinfoQueryType;
-import de.dhbw.mosbach.webservices.ultimap.graphql.client.types.FuelPriceType;
-import de.dhbw.mosbach.webservices.ultimap.graphql.client.types.FuelType;
+import de.dhbw.mosbach.webservices.ultimap.client.carinfo.types.FuelPriceType;
+import de.dhbw.mosbach.webservices.ultimap.graphql.types.CarInfoType;
+import de.dhbw.mosbach.webservices.ultimap.graphql.types.FuelType;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -36,13 +35,6 @@ public class DefaultCarinfoProvider implements ICarinfoProvider {
 
     @Override
     public CarInfoType getCar (int carId) {
-        CarinfoQueryType.newBuilder().car(
-                CarInfoType.newBuilder()
-                           .id(carId)
-                           .consumption(0.0).build()
-        );
-
-        dgsTemplate.exchange("")
         return cars.get(carId);
     }
 

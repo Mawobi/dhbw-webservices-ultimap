@@ -2,9 +2,9 @@ package de.dhbw.mosbach.webservices.routing.graphql;
 
 import com.netflix.graphql.dgs.DgsComponent;
 import com.netflix.graphql.dgs.DgsData;
-import de.dhbw.mosbach.webservices.ultimap.graphql.client.types.CoordinateInput;
-import de.dhbw.mosbach.webservices.ultimap.graphql.client.types.CoordinateType;
-import de.dhbw.mosbach.webservices.ultimap.graphql.client.types.RouteType;
+import de.dhbw.mosbach.webservices.ultimap.graphql.types.CoordinateInput;
+import de.dhbw.mosbach.webservices.ultimap.graphql.types.CoordinateType;
+import de.dhbw.mosbach.webservices.ultimap.graphql.types.RouteType;
 
 import java.util.Arrays;
 

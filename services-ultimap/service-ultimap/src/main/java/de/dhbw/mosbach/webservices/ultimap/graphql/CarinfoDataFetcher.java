@@ -3,7 +3,7 @@ package de.dhbw.mosbach.webservices.ultimap.graphql;
 import com.netflix.graphql.dgs.DgsComponent;
 import com.netflix.graphql.dgs.DgsData;
 import de.dhbw.mosbach.webservices.ultimap.external.carinfo.ICarinfoProvider;
-import de.dhbw.mosbach.webservices.ultimap.graphql.client.types.CarInfoType;
+import de.dhbw.mosbach.webservices.ultimap.graphql.types.CarInfoType;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;

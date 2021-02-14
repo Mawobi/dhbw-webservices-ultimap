@@ -50,23 +50,25 @@ public class UltimapDataFetcher {
         );
 
         // Calculate/Load the estimated costs
-        double wearFlatrate = receivedRoute.getDistance() * 0.06; // 6 ct per kilometre (https://unser-auto.org/fahrkostenrechner/)
-        double totalConsumption = receivedRoute.getDistance() * input.getFuel().getConsumption() / 100.0;
-        double fuelCosts = totalConsumption * carinfoProvider.getFuel(input.getFuel().getTyp()).getPrice();
-
-        toReturn.setCosts(
-                CarCostInfoType
-                        .newBuilder()
-                        .wearFlatrate(wearFlatrate)
-                        .totalConsumption(totalConsumption)
-                        .fuelCosts(fuelCosts)
-                        .build()
-        );
+        toReturn.setCosts(calculateCosts(input, receivedRoute));
 
         // Calculate/Load the predicted weather
         toReturn.setWeather(calculateWeather(toReturn.getRoute().getWaypoints(), input.getDeparture(), receivedRoute.getTime()));
 
         return toReturn;
+    }
+
+    private CarCostInfoType calculateCosts (UltimapInput input, RouteType receivedRoute) {
+        double wearFlatrate = receivedRoute.getDistance() * 0.06; // 6 ct per kilometre (https://unser-auto.org/fahrkostenrechner/)
+        double totalConsumption = receivedRoute.getDistance() * input.getFuel().getConsumption() / 100.0;
+        double fuelCosts = totalConsumption * carinfoProvider.getFuel(input.getFuel().getTyp()).getPrice();
+
+        return CarCostInfoType
+                .newBuilder()
+                .wearFlatrate(roundToDigits(wearFlatrate, 3))
+                .totalConsumption(roundToDigits(totalConsumption, 1))
+                .fuelCosts(roundToDigits(fuelCosts, 3))
+                .build();
     }
 
     private WeatherInfoType calculateWeather (List<CoordinateType> waypoints, Integer departure, Integer time) {
@@ -99,6 +101,11 @@ public class UltimapDataFetcher {
             }
         }
 
+        toReturn.setMin(roundToDigits(toReturn.getMin(), 3));
+        toReturn.setMax(roundToDigits(toReturn.getMax(), 3));
+        toReturn.setAvg(roundToDigits(toReturn.getAvg(), 3));
+        toReturn.setRain(roundToDigits(toReturn.getRain(), 3));
+
         return toReturn;
     }
 
@@ -119,6 +126,10 @@ public class UltimapDataFetcher {
         }
 
         return routingProvider.geocode(input);
+    }
+
+    private double roundToDigits (double value, int digits) {
+        return Math.round(value * Math.pow(10, digits)) / Math.pow(10, digits);
     }
 
 }

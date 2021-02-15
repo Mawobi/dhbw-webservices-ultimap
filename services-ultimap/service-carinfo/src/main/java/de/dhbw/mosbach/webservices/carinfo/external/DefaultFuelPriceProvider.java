@@ -40,6 +40,8 @@ public class DefaultFuelPriceProvider implements IFuelPriceProvider {
             if (currentTimestamp > cache.getTimestamp() + cacheValidFor) {
                 refreshData();
                 log.info("Refreshed FuelPrice Cache. New Value: {}", cache);
+            } else {
+                log.debug("Serving fuel-price from cache. Next refresh after {}", cache.getTimestamp() + cacheValidFor);
             }
 
             switch (type) {
@@ -58,6 +60,10 @@ public class DefaultFuelPriceProvider implements IFuelPriceProvider {
             default:
                 return 0; // Unknown FuelType
         }
+    }
+
+    public void resetCache() {
+        cache.setTimestamp(0);
     }
 
     private void refreshData () {

@@ -3,8 +3,6 @@ package de.dhbw.mosbach.webservices.carinfo;
 import com.netflix.graphql.dgs.DgsQueryExecutor;
 import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration;
 import com.netflix.graphql.dgs.client.codegen.GraphQLQueryRequest;
-import de.dhbw.mosbach.webservices.carinfo.data.ICarRepository;
-import de.dhbw.mosbach.webservices.carinfo.external.IFuelPriceProvider;
 import de.dhbw.mosbach.webservices.carinfo.graphql.CarInfoDataFetcher;
 import de.dhbw.mosbach.webservices.ultimap.client.test.client.AllCarsGraphQLQuery;
 import de.dhbw.mosbach.webservices.ultimap.client.test.client.AllCarsProjectionRoot;
@@ -18,7 +16,7 @@ import de.dhbw.mosbach.webservices.ultimap.graphql.types.FuelType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,9 +26,12 @@ import static de.dhbw.mosbach.webservices.ultimap.client.test.types.FuelType.BEN
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(classes = {
+        MockObjects.class,
+        MockObjects.MockCarRepository.class,
         DgsAutoConfiguration.class,
         CarInfoDataFetcher.class
 })
+@ActiveProfiles({"mocked"})
 public class CarinfoGraphQLTest {
     @Autowired
     DgsQueryExecutor dgsQueryExecutor;
@@ -100,16 +101,6 @@ public class CarinfoGraphQLTest {
                 FuelPriceType.class);
 
         assertEquals(expected, result);
-    }
-
-    @Bean
-    public IFuelPriceProvider getMockFuelPriceProvider () {
-        return new MockObjects.MockFuelPriceProvider();
-    }
-
-    @Bean
-    public ICarRepository getMockCarRepository () {
-        return new MockObjects.MockCarRepository();
     }
 
     public static class CarInfoList extends ArrayList<CarInfoType> {

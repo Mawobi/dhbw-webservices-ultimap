@@ -5,6 +5,9 @@ import de.dhbw.mosbach.webservices.carinfo.data.ICarRepository;
 import de.dhbw.mosbach.webservices.carinfo.external.IFuelPriceProvider;
 import de.dhbw.mosbach.webservices.ultimap.graphql.types.FuelType;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,7 +15,14 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+@TestConfiguration
+@Profile({"mocked"})
 public class MockObjects {
+    @Bean
+    public IFuelPriceProvider getMockFuelPriceProvider () {
+        return new MockObjects.MockFuelPriceProvider();
+    }
+
     // Mocked Price Provider
     public static class MockFuelPriceProvider implements IFuelPriceProvider {
         @Override
@@ -22,6 +32,7 @@ public class MockObjects {
     }
 
     // Mocked Repository (CRUD only limited)
+    @Profile({"mocked"})
     public static class MockCarRepository implements ICarRepository {
         private final List<Car> cars = Arrays.asList(
                 new Car(

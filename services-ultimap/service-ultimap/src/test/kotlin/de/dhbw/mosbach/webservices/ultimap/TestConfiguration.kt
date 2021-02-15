@@ -12,8 +12,10 @@ import de.dhbw.mosbach.webservices.ultimap.graphql.types.FuelType
 import de.dhbw.mosbach.webservices.ultimap.util.toRoutingCoordinate
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Profile
 
 @TestConfiguration
+@Profile("mocked")
 class TestConfiguration {
     @Bean
     fun getMockCarinfoProvider(): ICarinfoProvider =

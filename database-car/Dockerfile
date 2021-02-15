@@ -7,3 +7,4 @@ ENV MYSQL_USER="spring"
 ENV MYSQL_PASSWORD="changeit"
 
 COPY init.sql /docker-entrypoint-initdb.d/init.sql
+HEALTHCHECK --start-period=30s CMD mysqlcheck ultimap -p$MYSQL_ROOT_PASSWORD || exit 1

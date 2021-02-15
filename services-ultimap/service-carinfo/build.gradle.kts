@@ -8,6 +8,9 @@ plugins {
 version = "0.0.1"
 
 dependencies {
-//    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-//    runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+
+    runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
+
+    testRuntimeOnly("com.h2database:h2")
 }

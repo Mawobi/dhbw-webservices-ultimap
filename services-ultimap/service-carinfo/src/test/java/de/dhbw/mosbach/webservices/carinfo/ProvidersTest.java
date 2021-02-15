@@ -1,14 +1,17 @@
 package de.dhbw.mosbach.webservices.carinfo;
 
-import com.netflix.graphql.dgs.DgsQueryExecutor;
 import de.dhbw.mosbach.webservices.carinfo.data.Car;
 import de.dhbw.mosbach.webservices.carinfo.data.ICarRepository;
+import de.dhbw.mosbach.webservices.carinfo.external.DefaultFuelPriceProvider;
+import de.dhbw.mosbach.webservices.carinfo.external.IFuelPriceProvider;
+import de.dhbw.mosbach.webservices.carinfo.graphql.CarInfoDataFetcher;
 import de.dhbw.mosbach.webservices.ultimap.graphql.types.CarInfoType;
-import de.dhbw.mosbach.webservices.ultimap.graphql.types.FuelPriceType;
 import de.dhbw.mosbach.webservices.ultimap.graphql.types.FuelType;
-import lombok.Data;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,21 +28,28 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ServiceCarinfoApplicationTests {
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@SpringBootTest(classes = {
+        ServiceCarinfoApplication.class,
+        DefaultFuelPriceProvider.class,
+        CarInfoDataFetcher.class
+})
+public class ProvidersTest {
     @Autowired
     private RestTemplate template;
     private MockRestServiceServer mockServer;
-
-    @Autowired
-    DgsQueryExecutor dgsQueryExecutor;
-    @Autowired
-    private ICarRepository carRepository;
 
     @Value("${ultimap.carinfo.fuel.station}")
     private String stationId;
     @Value("${ultimap.carinfo.token}")
     private String apiToken;
+
+    @Autowired
+    private IFuelPriceProvider fuelPriceProvider;
+    @Autowired
+    private ICarRepository carRepository;
+    @Autowired
+    private CarInfoDataFetcher dataFetcher;
 
     @BeforeEach
     void setUp () {
@@ -47,52 +57,67 @@ class ServiceCarinfoApplicationTests {
     }
 
     @Test
-    void contextLoads () {
-    }
-
-    @Test
-    void fullTest () {
-        clearAndLoadTestData();
+    @Order(1)
+    void testFuelPriceProvisionCaching () throws InterruptedException {
+        // https://creativecommons.tankerkoenig.de/
         String url = String.format("https://creativecommons.tankerkoenig.de/json/prices.php?ids=%s&apikey=%s", stationId, apiToken);
         mockServer
                 .expect(requestTo(url))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(getTankerkoenigResponse(), MediaType.APPLICATION_JSON));
+        assertEquals(1.439, fuelPriceProvider.getFuelPrice(FuelType.BENZOL));
+        // Get a second value, that should be cached
+        assertEquals(1.219, fuelPriceProvider.getFuelPrice(FuelType.DIESEL));
 
-        String query = "{\n" +
-                       "  car(carId: 1) {\n" +
-                       "    id\n" +
-                       "    name\n" +
-                       "    consumption\n" +
-                       "    typ\n" +
-                       "  }\n" +
-                       "  allCars {\n" +
-                       "    id\n" +
-                       "    name\n" +
-                       "    consumption\n" +
-                       "    typ\n" +
-                       "  }\n" +
-                       "  fuel(typ: DIESEL) {\n" +
-                       "    price\n" +
-                       "  }\n" +
-                       "}";
-        TestData actual = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
-                query,
-                "data",
-                TestData.class);
-
-        assertEquals(new TestData(), actual);
+        // Should still be Cached
+        Thread.sleep(2000);
+        assertEquals(1.439, fuelPriceProvider.getFuelPrice(FuelType.BENZOL));
+        ((DefaultFuelPriceProvider) fuelPriceProvider).resetCache();
     }
 
-    @Data
-    static class TestData {
-        private CarInfoType car = new CarInfoType(1, "Audi A3", 5.8, FuelType.BENZOL);
-        private List<CarInfoType> allCars = Arrays.asList(
+    @Test
+    @Order(2)
+    void testFuelPriceProvisionCacheInvalidating () throws InterruptedException {
+        // https://creativecommons.tankerkoenig.de/
+        String url = String.format("https://creativecommons.tankerkoenig.de/json/prices.php?ids=%s&apikey=%s", stationId, apiToken);
+        mockServer
+                .expect(requestTo(url))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(getTankerkoenigResponse(), MediaType.APPLICATION_JSON));
+        mockServer
+                .expect(requestTo(url))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(getTankerkoenigResponse(), MediaType.APPLICATION_JSON));
+
+        assertEquals(1.439, fuelPriceProvider.getFuelPrice(FuelType.BENZOL));
+        // Get a second value, that should be cached
+        assertEquals(1.219, fuelPriceProvider.getFuelPrice(FuelType.DIESEL));
+
+        // Cache is now invalid
+        Thread.sleep(6000);
+        assertEquals(1.219, fuelPriceProvider.getFuelPrice(FuelType.DIESEL));
+        mockServer.verify();
+    }
+
+    @Test
+    @Order(3)
+    void testCarLoadingFromDatabase () {
+        clearAndLoadTestData();
+        assertEquals(
+                new CarInfoType(1, "Audi A3", 5.8, FuelType.BENZOL),
+                dataFetcher.getCar(1)
+        );
+    }
+
+    @Test
+    @Order(4)
+    void testAllCarsLoadingFromDatabase () {
+        List<CarInfoType> expected = Arrays.asList(
                 new CarInfoType(1, "Audi A3", 5.8, FuelType.BENZOL),
                 new CarInfoType(2, "VW Golf 8 TDI", 4.8, FuelType.DIESEL),
                 new CarInfoType(3, "Skoda Octavia IV", 4.0, FuelType.DIESEL)
         );
-        private FuelPriceType fuel = new FuelPriceType(1.219);
+        assertEquals(expected, dataFetcher.getAllCars());
     }
 
     private void clearAndLoadTestData () {

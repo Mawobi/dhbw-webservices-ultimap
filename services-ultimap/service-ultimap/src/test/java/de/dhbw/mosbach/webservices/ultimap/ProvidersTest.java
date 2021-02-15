@@ -42,7 +42,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
         DefaultCarinfoProvider.class
 }
 )
-public class TestExternalProviders {
+public class ProvidersTest {
     @Autowired
     private RestTemplate template;
     private MockRestServiceServer mockServer;

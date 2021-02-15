@@ -43,7 +43,7 @@ subprojects {
                 .resources.srcDir("src/main/filteredResources")
         }
 
-        tasks.withType(ProcessResources::class.java) {
+        tasks.getByName<ProcessResources>("processResources"){
             with(copySpec {
                 from("src/main/filteredResources")
                 expand(project.properties)
@@ -70,6 +70,8 @@ subprojects {
                 // Lombok
                 add("compileOnly", "org.projectlombok:lombok")
                 add("annotationProcessor", "org.projectlombok:lombok")
+                add("testCompileOnly", "org.projectlombok:lombok")
+                add("testAnnotationProcessor", "org.projectlombok:lombok")
             }
         }
     }

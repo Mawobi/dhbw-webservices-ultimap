@@ -10,19 +10,19 @@ import java.util.Arrays;
 
 @DgsComponent
 public class RoutingDataFetcher {
-    @DgsData(parentType = "RoutingQueryType", field = "geocode")
+    @DgsData(parentType = "Query", field = "geocode")
     public CoordinateType geocode (String name) {
-        return new CoordinateType(9.773, 49.490);
+        return new CoordinateType(49.490, 9.773);
     }
 
-    @DgsData(parentType = "RoutingQueryType", field = "route")
+    @DgsData(parentType = "Query", field = "route")
     public RouteType getRoute (CoordinateInput start, CoordinateInput finish) {
         return new RouteType(
                 60,
                 50000,
                 Arrays.asList(
-                        new CoordinateType(9.146, 49.352),
-                        new CoordinateType(9.773, 49.490)
+                        new CoordinateType(49.352, 9.146),
+                        new CoordinateType(49.490, 9.773)
                 )
         );
     }

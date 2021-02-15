@@ -1,7 +1,10 @@
 import com.netflix.graphql.dgs.codegen.gradle.GenerateJavaTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.dsl.SpringBootExtension
 
 plugins {
+    kotlin("jvm") version "1.4.30" apply false
+    kotlin("plugin.spring") version "1.4.30" apply false
     id("org.springframework.boot") version "2.4.2" apply false
     id("io.spring.dependency-management") version "1.0.11.RELEASE" apply false
     id("com.netflix.dgs.codegen") version "4.0.10" apply false
@@ -71,6 +74,8 @@ subprojects {
         }
     }
 
+    // DGS Codegen
+    @OptIn(ExperimentalStdlibApi::class)
     pluginManager.withPlugin("com.netflix.dgs.codegen") {
         // Workaround for bug in DGS-Generation Plugin
         // The wrong generated Sources Dir is added, since the value of generatedSourcesDir in the Task is queried before this configuration is applied.
@@ -80,11 +85,31 @@ subprojects {
         javaSourceSet.setSrcDirs(javaSourceSet.srcDirs.filter { !it.path.equals(File("$buildDir/generated").path) })
         javaSourceSet.srcDir("$buildDir/generated/dgs/java/generated")
 
-        @OptIn(ExperimentalStdlibApi::class)
         tasks.getByName<GenerateJavaTask>("generateJava") {
             packageName = "de.dhbw.mosbach.webservices.ultimap.graphql"
             generatedSourcesDir = "$buildDir/generated/dgs/java"
             generateClient = false
+            language = "JAVA"
+        }
+
+        val generateJavaTestClient = tasks.create("generateJavaTestClient", GenerateJavaTask::class.java) {
+            packageName = "de.dhbw.mosbach.webservices.ultimap.client.test"
+            generatedSourcesDir = "$buildDir/generated/dgs/client-test/java"
+            generateClient = true
+            language = "JAVA"
+        }
+        extensions.getByType(SourceSetContainer::class.java).getByName("test").java
+            .srcDir("$buildDir/generated/dgs/client-test/java/generated")
+
+        pluginManager.withPlugin("java") {
+            tasks.withType(JavaCompile::class.java) {
+                dependsOn(generateJavaTestClient)
+            }
+        }
+        pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
+            tasks.withType(KotlinCompile::class.java) {
+                dependsOn(generateJavaTestClient)
+            }
         }
     }
 }

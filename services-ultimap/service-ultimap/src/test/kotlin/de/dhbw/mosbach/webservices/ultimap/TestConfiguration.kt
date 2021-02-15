@@ -12,14 +12,15 @@ import de.dhbw.mosbach.webservices.ultimap.graphql.types.FuelType
 import de.dhbw.mosbach.webservices.ultimap.util.toRoutingCoordinate
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import java.util.Arrays
+import org.springframework.context.annotation.Profile
 
 @TestConfiguration
+@Profile("mocked")
 class TestConfiguration {
     @Bean
     fun getMockCarinfoProvider(): ICarinfoProvider =
         object : ICarinfoProvider {
-            private val cars = Arrays.asList(
+            private val cars = listOf(
                 CarInfoType(
                     0,
                     "Lamborghini Aventador S",
@@ -50,8 +51,9 @@ class TestConfiguration {
     @Bean
     fun getMockWeatherProvider() : IWeatherProvider =
         object : IWeatherProvider {
-            override fun getWeather(coordinateType: CoordinateType?): WeatherType
-            = WeatherType(12.4, 4.8)
+            override fun getWeather(inputCoordinate: CoordinateType,
+                                    timestamp: Int
+            ): WeatherType = WeatherType(12.4, 4.8)
         }
 
     @Bean

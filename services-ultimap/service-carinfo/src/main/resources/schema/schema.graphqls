@@ -1,8 +1,4 @@
-schema {
-    query: CarinfoQueryType
-}
-
-type CarinfoQueryType {
+type Query {
     # Information for a single car by carId
     car(carId: Int!): CarInfoType
     # Current pricingInformation for a certain Type of Fuel

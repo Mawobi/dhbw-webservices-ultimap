@@ -1,5 +1,5 @@
 type Query {
-    route(start: CoordinateInput!, finish: CoordinateInput!): RouteType
+    route(start: CoordinateInput!, destination: CoordinateInput!): RouteType
     geocode(name: String!) : CoordinateType
 }
 

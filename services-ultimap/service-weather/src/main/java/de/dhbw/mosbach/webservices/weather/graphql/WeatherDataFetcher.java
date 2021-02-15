@@ -7,8 +7,8 @@ import de.dhbw.mosbach.webservices.ultimap.graphql.types.WeatherType;
 
 @DgsComponent
 public class WeatherDataFetcher {
-    @DgsData(parentType = "WeatherQueryType", field = "weather")
-    public WeatherType getWeather (CoordinateInput coordinate) {
+    @DgsData(parentType = "Query", field = "weather")
+    public WeatherType getWeather (CoordinateInput coordinate, int timestamp) {
         return new WeatherType(1.2, 0.8);
     }
 }

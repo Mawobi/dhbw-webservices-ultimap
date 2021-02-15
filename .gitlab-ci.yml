@@ -10,3 +10,4 @@ stages:
 include:
   - local: app-web/webapp-ci.yml
   - local: services-ultimap/services-ci.yml
+  - local: database-car/db-image-ci.yml

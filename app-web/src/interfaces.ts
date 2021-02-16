@@ -1,44 +1,53 @@
 export interface UltimapRouteRequest {
-	start: Coordinates | string;
-	end: Coordinates | string;
-	departure?: Date;
+  geopoints: {
+    start: string;
+    destination: string;
+  };
+  departure: number;
+  fuel: {
+    consumption: number;
+    typ: FuelType;
+  };
+}
 
-	/** Fuel consumption per liter/100 km of the users car. */
-	fuel_consumption?: number;
-
-	fuel_type?: 'gasoline' | 'diesel';
+export enum FuelType {
+  BENZOL = 'BENZOL',
+  DIESEl = 'DIESEL',
 }
 
 export interface UltimapRouteResponse {
-	estimated_time: number;
-	distance: number;
-	route: Coordinates[];
-
-	/** Fuel consumption for whole route in liters. */
-	fuel_consumption: string;
-
-	/** Fuel costs for the whole route in €. */
-	fuel_costs: number;
-
-	/** Pauschale. */
-	car_wear_flatrate: number;
-
-	weather: WeatherInfo;
+  data: { routeInfo: RouteInfo };
 }
 
-export interface WeatherInfo {
-	min: number;
-	max: number;
-	avg: number;
-
-	/** Rain probability. */
-	rain: number;
+export interface RouteInfo {
+  route: Route;
+  costs: RouteCosts;
+  weather: RouteWeather;
 }
 
-export interface Coordinates {
-	/** "Längengrad" */
-	lon: number;
+export interface Route {
+  duration: number;
+  distance: number;
+  waypoints: Waypoint[];
+}
 
-	/** "Breitengrad" */
-	lat: number;
+export interface RouteCosts {
+  totalConsumption: number;
+  fuelCosts: number;
+  wearFlatrate: number;
+}
+
+export interface RouteWeather {
+  min: number;
+  max: number;
+  avg: number;
+  rain: number;
+}
+
+export interface Waypoint {
+  /** "Breitengrad" */
+  lat: number;
+
+  /** "Längengrad" */
+  lon: number;
 }

@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import './styles/App.scss';
-import Header from './components/Header/Header';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Home from './pages/home/Home';
+import NavBar from './components/navbar/Navbar';
 
 export default function App() {
   // disable preload
@@ -13,12 +13,13 @@ export default function App() {
   return (
     <Router>
       <div>
-        <Header />
-
         <Switch>
           <Route exact path="/" component={Home} />
+          <Route render={() => <h1>404: page not found</h1>} />
         </Switch>
       </div>
+
+      <NavBar />
     </Router>
   );
 }

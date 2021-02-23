@@ -1,0 +1,31 @@
+.nav {
+  &__tab {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    cursor: pointer;
+
+    color: var(--um-color-font);
+    text-decoration: none;
+
+    height: 64px;
+    width: 64px;
+    border-radius: 50%;
+
+    transition: background 0.3s ease;
+
+    &:hover {
+      background: rgba(var(--um-color-primary-hover-rgb), 0.1);
+    }
+
+    &:active {
+      background: rgba(var(--um-color-primary-active-rgb), 0.1);
+    }
+  }
+
+  &__icon {
+    color: var(--um-color-primary);
+    font-size: 22px;
+  }
+}

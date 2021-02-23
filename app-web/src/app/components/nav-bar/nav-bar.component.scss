@@ -1,0 +1,25 @@
+.nav {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  box-shadow: var(--um-box-shadow);
+  padding: 10px 20px;
+
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &__tabs {
+    list-style-type: none;
+    width: fit-content;
+
+    li {
+      display: inline-block;
+      margin: 0 20px;
+    }
+  }
+}

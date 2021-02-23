@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import './styles/App.scss';
 import Header from './components/Header/Header';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import Home from './pages/home/Home';
 
 export default function App() {
   // disable preload
@@ -9,17 +11,14 @@ export default function App() {
   });
 
   return (
-    <div>
-      <Header />
-      <p> Hallo Welt!</p>
-      <button className={'btn'} onClick={toggleDarkMode}>
-        Theme ändern
-      </button>
-    </div>
-  );
-}
+    <Router>
+      <div>
+        <Header />
 
-function toggleDarkMode() {
-  const html = document.documentElement;
-  html.setAttribute('theme', html.getAttribute('theme') === 'dark' ? 'light' : 'dark');
+        <Switch>
+          <Route exact path="/" component={Home} />
+        </Switch>
+      </div>
+    </Router>
+  );
 }

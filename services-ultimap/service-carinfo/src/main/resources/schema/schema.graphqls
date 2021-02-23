@@ -2,7 +2,7 @@ type Query {
     # Information for a single car by carId
     car(carId: Int!): CarInfoType
     # Current pricingInformation for a certain Type of Fuel
-    fuel(typ: FuelType!): FuelPriceType
+    fuel(typ: FuelType!): FuelPriceType!
     # Information of all cars in the database
     allCars: [CarInfoType]!
 }

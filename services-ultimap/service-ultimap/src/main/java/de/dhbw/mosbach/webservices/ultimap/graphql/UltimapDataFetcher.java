@@ -16,6 +16,7 @@ import de.dhbw.mosbach.webservices.ultimap.graphql.types.WeatherInfoType;
 import de.dhbw.mosbach.webservices.ultimap.util.ConversionUtilKt;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,6 +60,10 @@ public class UltimapDataFetcher {
     }
 
     private CarCostInfoType calculateCosts (UltimapInput input, RouteType receivedRoute) {
+        if(input.getFuel() == null) {
+            return null;
+        }
+
         double wearFlatrate = receivedRoute.getDistance() * 0.06; // 6 ct per kilometre (https://unser-auto.org/fahrkostenrechner/)
         double totalConsumption = receivedRoute.getDistance() * input.getFuel().getConsumption() / 100.0;
         double fuelCosts = totalConsumption * carinfoProvider.getFuel(input.getFuel().getTyp()).getPrice();
@@ -73,6 +78,9 @@ public class UltimapDataFetcher {
 
     private WeatherInfoType calculateWeather (List<CoordinateType> waypoints, Integer departure, Integer time) {
         // Take only 10 samples of the route to ease the weather service
+        if (departure == null) {
+            departure = ((int) Instant.now().getEpochSecond());
+        }
         final int samples = 10;
         final double segmentSize = waypoints.size() / ((double) samples);
 

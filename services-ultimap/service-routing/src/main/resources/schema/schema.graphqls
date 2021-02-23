@@ -1,6 +1,6 @@
 type Query {
-    route(start: CoordinateInput!, destination: CoordinateInput!): RouteType
-    geocode(name: String!) : CoordinateType
+    route(start: CoordinateInput!, destination: CoordinateInput!): RouteType!
+    geocode(name: String!) : CoordinateType!
 }
 
 ## Input types
@@ -16,7 +16,7 @@ type CoordinateType {
 }
 
 type RouteType {
-    time: Int                   # Time in minutes
-    distance: Int               # distance in metres
+    time: Int!                  # Time in minutes
+    distance: Int!              # distance in metres
     waypoints: [CoordinateType] # Waypoints
 }

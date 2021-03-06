@@ -12,7 +12,7 @@ import {InMemoryCache} from '@apollo/client/core';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
   ],
   imports: [
     BrowserModule,

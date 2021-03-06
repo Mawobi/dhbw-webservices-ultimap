@@ -6,6 +6,7 @@ import OSM from 'ol/source/OSM';
 import View from 'ol/View';
 import {transform} from 'ol/proj';
 import {Coordinate} from 'ol/coordinate';
+import {IWaypoint} from '../../types/UltimapGraphQL';
 
 @Component({
   selector: 'app-map',
@@ -21,18 +22,12 @@ export class MapComponent implements OnInit {
   ngOnInit(): void {
     this.map = this.getMap();
 
-    this.ultimap.queryRouteInfo('DHBW Mosbach', 'Heilbronn', new Date()).then((routeInfo => {
-      if (routeInfo) {
-        console.log(routeInfo);
-
-        if (routeInfo.route.waypoints && routeInfo.route.waypoints.length > 0) {
-          const lat = routeInfo.route.waypoints[0].lat;
-          const lon = routeInfo.route.waypoints[0].lon;
-
-          this.setCenter(lat, lon);
-        }
-      }
-    }));
+    // set map center to user location if permisison granted
+    this.getUserGeolocation().then(coordinates => {
+      this.setCenter(coordinates.lat, coordinates.lon);
+    }).catch(e => {
+      console.log('User declined geolocation permission.');
+    });
   }
 
   private getMap(): Map {
@@ -46,8 +41,8 @@ export class MapComponent implements OnInit {
         })
       ],
       view: new View({
-        center: this.transformCoordinates(0, 0),
-        zoom: 5,
+        center: this.transformCoordinates(49.354432818804625, 9.150116082904281),
+        zoom: 14,
       })
     });
   }
@@ -64,5 +59,22 @@ export class MapComponent implements OnInit {
 
   private transformCoordinates(lat: number, lon: number): Coordinate {
     return transform([lon, lat], 'EPSG:4326', 'EPSG:3857');
+  }
+
+  private async getUserGeolocation(): Promise<IWaypoint> {
+    return new Promise((resolve, reject) => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+
+          resolve({lat, lon});
+        }, () => {
+          reject();
+        });
+      } else {
+        reject();
+      }
+    });
   }
 }

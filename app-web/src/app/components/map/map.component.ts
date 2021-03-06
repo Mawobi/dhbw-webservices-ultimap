@@ -6,13 +6,13 @@ import OSM from 'ol/source/OSM';
 import View from 'ol/View';
 import {fromLonLat} from 'ol/proj';
 import {Coordinate} from 'ol/coordinate';
-import {IWaypoint} from '../../types/UltimapGraphQL';
+import {IRouteInfo, IWaypoint} from '../../types/UltimapGraphQL';
+import {Feature} from 'ol';
+import {LineString, Point} from 'ol/geom';
+import {Icon, Stroke, Style} from 'ol/style';
+import IconAnchorUnits from 'ol/style/IconAnchorUnits';
 import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
-import {Feature} from 'ol';
-import {Point} from 'ol/geom';
-import {Icon, Style} from 'ol/style';
-import IconAnchorUnits from 'ol/style/IconAnchorUnits';
 
 @Component({
   selector: 'app-map',
@@ -20,10 +20,21 @@ import IconAnchorUnits from 'ol/style/IconAnchorUnits';
   styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements OnInit {
-  map: Map;
+  private map: Map;
+  private routeInfo: IRouteInfo | undefined;
 
   constructor(private ultimap: UltimapService) {
     this.map = new Map({});
+
+    ultimap.queryRouteInfo('Dhbw Mosbach', 'Heilbronn');
+
+    this.ultimap.routeInfo.subscribe(info => {
+      this.routeInfo = info;
+
+      if (info && info.route.waypoints) {
+        this.displayRoute(info.route.waypoints);
+      }
+    });
   }
 
   private static transformCoordinates(lat: number, lon: number): Coordinate {
@@ -36,26 +47,41 @@ export class MapComponent implements OnInit {
       layers: [
         new TileLayer({
           source: new OSM({
-            url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-          })
+            url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+          }),
         })
       ],
       view: new View({
         center: MapComponent.transformCoordinates(49.354432818804625, 9.150116082904281),
         zoom: 14,
-      })
+      }),
     });
   }
 
   ngOnInit(): void {
     this.map = MapComponent.getMap();
 
-    // set map center to user location if permisison granted
+    setTimeout(() => {
+      this.updateMapTheme();
+    }, 0);
+
+    const observer = new MutationObserver(() => {
+      this.updateMapTheme();
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['theme'],
+      attributeOldValue: false,
+      subtree: false
+    });
+
+    // set map center to user location if permission granted
     this.getUserGeolocation().then(coordinates => {
       this.setCenter(coordinates.lat, coordinates.lon);
       this.addMarker(coordinates);
-    }).catch(() => {
-      console.log('User declined geolocation permission.');
+    }).catch((e: Error) => {
+      console.warn(e.message);
     });
   }
 
@@ -74,10 +100,10 @@ export class MapComponent implements OnInit {
 
           resolve({lat, lon});
         }, () => {
-          reject();
+          reject(new Error('User declined geolocation permission.'));
         });
       } else {
-        reject();
+        reject(new Error('Geolocation is not supported on this device.'));
       }
     });
   }
@@ -99,9 +125,61 @@ export class MapComponent implements OnInit {
     marker.setStyle(iconStyle);
 
     const source = new VectorSource({features: [marker]});
-    const layer = new VectorLayer({source});
-    this.map.addLayer(layer);
+    const markerLayer = new VectorLayer({source, className: 'user-geolocation'});
 
-    source.addFeature(marker);
+    // check if marker already exists and remove if yes
+    this.map.getLayers().forEach(layer => {
+      if (layer.getClassName() === 'user-geolocation') {
+        this.map.removeLayer(layer);
+      }
+    });
+
+    this.map.addLayer(markerLayer);
+  }
+
+  private displayRoute(waypoints: IWaypoint[]): void {
+    // check if route already exists and remove if yes
+    this.map.getLayers().forEach(layer => {
+      if (layer.getClassName() === 'route-path') {
+        this.map.removeLayer(layer);
+      }
+    });
+
+    const path = waypoints.map(waypoint => {
+      return MapComponent.transformCoordinates(waypoint.lat, waypoint.lon);
+    });
+
+    const routePath = new LineString(path);
+
+    const feature = new Feature({
+      geometry: routePath
+    });
+
+    const source = new VectorSource();
+    source.addFeature(feature);
+
+    const primaryColor = getComputedStyle(document.body).getPropertyValue('--um-color-primary');
+
+    const routeLayer = new VectorLayer({
+      source,
+      className: 'route-path',
+      style: new Style({
+        stroke: new Stroke({
+          color: primaryColor ? primaryColor : 'red',
+          width: 4
+        })
+      })
+    });
+
+    this.map.addLayer(routeLayer);
+  }
+
+  private updateMapTheme(): void {
+    const isDark = document.documentElement.getAttribute('theme') === 'dark';
+    const canvas = document.querySelector('#map canvas') as HTMLCanvasElement;
+
+    if (canvas) {
+      canvas.style.filter = isDark ? 'invert(90%)' : '';
+    }
   }
 }

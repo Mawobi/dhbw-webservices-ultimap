@@ -26,8 +26,6 @@ export class MapComponent implements OnInit {
   constructor(private ultimap: UltimapService) {
     this.map = new Map({});
 
-    ultimap.queryRouteInfo('Dhbw Mosbach', 'Heilbronn');
-
     this.ultimap.routeInfo.subscribe(info => {
       this.routeInfo = info;
 
@@ -58,15 +56,21 @@ export class MapComponent implements OnInit {
     });
   }
 
+  private static updateMapTheme(): void {
+    const isDark = document.documentElement.getAttribute('theme') === 'dark';
+    const canvas = document.querySelector('#map canvas') as HTMLCanvasElement;
+
+    if (canvas) {
+      canvas.style.filter = isDark ? 'invert(90%)' : '';
+    }
+  }
+
   ngOnInit(): void {
     this.map = MapComponent.getMap();
-
-    setTimeout(() => {
-      this.updateMapTheme();
-    }, 0);
+    this.map.once('postrender', MapComponent.updateMapTheme);
 
     const observer = new MutationObserver(() => {
-      this.updateMapTheme();
+      MapComponent.updateMapTheme();
     });
 
     observer.observe(document.documentElement, {
@@ -125,7 +129,7 @@ export class MapComponent implements OnInit {
     marker.setStyle(iconStyle);
 
     const source = new VectorSource({features: [marker]});
-    const markerLayer = new VectorLayer({source, className: 'user-geolocation'});
+    const markerLayer = new VectorLayer({source, className: 'user-geolocation', zIndex: 2});
 
     // check if marker already exists and remove if yes
     this.map.getLayers().forEach(layer => {
@@ -163,6 +167,7 @@ export class MapComponent implements OnInit {
     const routeLayer = new VectorLayer({
       source,
       className: 'route-path',
+      zIndex: 1,
       style: new Style({
         stroke: new Stroke({
           color: primaryColor ? primaryColor : 'red',
@@ -172,14 +177,10 @@ export class MapComponent implements OnInit {
     });
 
     this.map.addLayer(routeLayer);
-  }
 
-  private updateMapTheme(): void {
-    const isDark = document.documentElement.getAttribute('theme') === 'dark';
-    const canvas = document.querySelector('#map canvas') as HTMLCanvasElement;
-
-    if (canvas) {
-      canvas.style.filter = isDark ? 'invert(90%)' : '';
+    if (waypoints.length > 0) {
+      const destination = waypoints[waypoints.length - 1];
+      this.setCenter(destination.lat, destination.lon);
     }
   }
 }

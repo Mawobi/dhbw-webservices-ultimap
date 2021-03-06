@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {UltimapService} from './services/ultimap.service';
 
 @Component({
   selector: 'app-root',
@@ -7,7 +8,11 @@ import {Component, OnInit} from '@angular/core';
 })
 export class AppComponent implements OnInit {
 
-  constructor() {
+  constructor(private ultimap: UltimapService) {
+    // TODO: remove
+    setTimeout(() => {
+      ultimap.queryRouteInfo('Dhbw Mosbach', 'Heilbronn');
+    }, 1000);
   }
 
   ngOnInit(): void {

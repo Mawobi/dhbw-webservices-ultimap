@@ -4,9 +4,15 @@ import {UltimapService} from '../../services/ultimap.service';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
 import View from 'ol/View';
-import {transform} from 'ol/proj';
+import {fromLonLat} from 'ol/proj';
 import {Coordinate} from 'ol/coordinate';
 import {IWaypoint} from '../../types/UltimapGraphQL';
+import VectorSource from 'ol/source/Vector';
+import VectorLayer from 'ol/layer/Vector';
+import {Feature} from 'ol';
+import {Point} from 'ol/geom';
+import {Icon, Style} from 'ol/style';
+import IconAnchorUnits from 'ol/style/IconAnchorUnits';
 
 @Component({
   selector: 'app-map',
@@ -14,23 +20,17 @@ import {IWaypoint} from '../../types/UltimapGraphQL';
   styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements OnInit {
-  map: Map | undefined;
+  map: Map;
 
   constructor(private ultimap: UltimapService) {
+    this.map = new Map({});
   }
 
-  ngOnInit(): void {
-    this.map = this.getMap();
-
-    // set map center to user location if permisison granted
-    this.getUserGeolocation().then(coordinates => {
-      this.setCenter(coordinates.lat, coordinates.lon);
-    }).catch(e => {
-      console.log('User declined geolocation permission.');
-    });
+  private static transformCoordinates(lat: number, lon: number): Coordinate {
+    return fromLonLat([lon, lat]);
   }
 
-  private getMap(): Map {
+  private static getMap(): Map {
     return new Map({
       target: 'map',
       layers: [
@@ -41,24 +41,28 @@ export class MapComponent implements OnInit {
         })
       ],
       view: new View({
-        center: this.transformCoordinates(49.354432818804625, 9.150116082904281),
+        center: MapComponent.transformCoordinates(49.354432818804625, 9.150116082904281),
         zoom: 14,
       })
     });
   }
 
-  private setCenter(lat: number, lon: number): void {
-    if (!this.map) {
-      return;
-    }
+  ngOnInit(): void {
+    this.map = MapComponent.getMap();
 
-    const view = this.map.getView();
-    view.setCenter(this.transformCoordinates(lat, lon));
-    view.setZoom(12);
+    // set map center to user location if permisison granted
+    this.getUserGeolocation().then(coordinates => {
+      this.setCenter(coordinates.lat, coordinates.lon);
+      this.addMarker(coordinates);
+    }).catch(() => {
+      console.log('User declined geolocation permission.');
+    });
   }
 
-  private transformCoordinates(lat: number, lon: number): Coordinate {
-    return transform([lon, lat], 'EPSG:4326', 'EPSG:3857');
+  private setCenter(lat: number, lon: number): void {
+    const view = this.map.getView();
+    view.setCenter(MapComponent.transformCoordinates(lat, lon));
+    view.setZoom(12);
   }
 
   private async getUserGeolocation(): Promise<IWaypoint> {
@@ -76,5 +80,28 @@ export class MapComponent implements OnInit {
         reject();
       }
     });
+  }
+
+  private addMarker(waypoint: IWaypoint): void {
+    const marker = new Feature({
+      geometry: new Point(fromLonLat([waypoint.lon, waypoint.lat])),
+    });
+
+    const iconStyle = new Style({
+      image: new Icon({
+        anchor: [0.5, 46],
+        anchorXUnits: IconAnchorUnits.FRACTION,
+        anchorYUnits: IconAnchorUnits.PIXELS,
+        src: 'assets/marker.png',
+      }),
+    });
+
+    marker.setStyle(iconStyle);
+
+    const source = new VectorSource({features: [marker]});
+    const layer = new VectorLayer({source});
+    this.map.addLayer(layer);
+
+    source.addFeature(marker);
   }
 }

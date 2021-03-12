@@ -48,6 +48,10 @@ subprojects {
                 from("src/main/filteredResources")
                 expand(project.properties)
             })
+            with(copySpec {
+                from("src/main/resources/schema")
+                into("public")
+            })
             exclude { it.path.contains("filteredResources") }
         }
     }

@@ -13,5 +13,5 @@ input CoordinateInput {
 ## return types
 type WeatherType {
     temp: Float!,   # Temperature in degrees of Celsius
-    rain: Float!    # Amount of rain in mm/cm² #TODO: @Marcel: Evtl. muss die Einheit hier noch angepasst werden.
+    rain: Float!    # Amount of rain in mm
 }

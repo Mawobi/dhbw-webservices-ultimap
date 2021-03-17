@@ -7,5 +7,5 @@ public class OpenWeatherMapSimplifiedHourlyResponse {
 
     private long dt;
     private double temp;
-    private OpenWeatherMapSimplifiedRainResponse rain;
+    private OpenWeatherMapSimplifiedRainResponse rain = new OpenWeatherMapSimplifiedRainResponse();
 }

@@ -23,6 +23,6 @@ public class OpenWeatherMapSimplifiedResponse {
             if (Math.abs(listItem.getDt() - timestamp) <= 1800)
                 return listItem;
         }
-        return null;
+        return hourly.get(0);
     }
 }

@@ -1,0 +1,24 @@
+<div>
+  <div class="bubbles">
+    <div *ngIf="request.start" class="bubble">
+      Start: {{ request.start }}
+      <span (click)="clearStart()" class="bubble__remove"></span>
+    </div>
+
+    <div *ngIf="request.destination" class="bubble">
+      Ziel: {{ request.destination }}
+      <span (click)="clearDestination()" class="bubble__remove"></span>
+    </div>
+  </div>
+
+  <div class="card" id="searchbar">
+    <input (keypress)="setStart($event)" *ngIf="!request.start" placeholder="Startadresse...">
+    <input (keypress)="setDestination($event)" *ngIf="request.start && !request.destination"
+           placeholder="Zieladresse...">
+    <p *ngIf="request.start && request.destination" class="placeholder">Entferne den Start oder das Ziel, um eine neue
+      Route zu berechnen.</p>
+
+    <ion-icon (click)="queryRoute()" name="search"></ion-icon>
+  </div>
+
+</div>

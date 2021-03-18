@@ -1,0 +1,32 @@
+<div *ngIf="routeInfo" class="card" id="route-details">
+  <h2>Aktuelle Route:</h2>
+
+  <div id="details">
+    <div class="iconItem">
+      <ion-icon name="map-outline"></ion-icon>
+      <span>{{ routeInfo.route.distance / 1000 | number:"1.0-1" }} km</span>
+    </div>
+
+    <div class="iconItem">
+      <ion-icon name="stopwatch-outline"></ion-icon>
+      <span>{{ routeInfo.route.duration | number:"1.0-0" }} Minuten</span>
+    </div>
+
+    <div *ngIf="routeInfo.weather" class="iconItem">
+      <ion-icon name="thermometer-outline"></ion-icon>
+      <span>{{ routeInfo.weather.avg | number:"1.0-1" }}°C ({{ routeInfo.weather.min | number:"1.0-1" }}
+        °C bis {{ routeInfo.weather.max | number:"1.0-1" }}
+        °C)</span>
+    </div>
+
+    <div *ngIf="routeInfo.costs" class="iconItem">
+      <ion-icon name="cash-outline"></ion-icon>
+      <span>{{ routeInfo.costs.fuelCosts + routeInfo.costs.wearFlatrate | currency:"EUR" }}</span>
+    </div>
+
+    <div *ngIf="routeInfo.costs" class="iconItem">
+      <ion-icon name="flame-outline"></ion-icon>
+      <span>{{ routeInfo.costs.totalConsumption | number:"1.0-1" }} Liter</span>
+    </div>
+  </div>
+</div>

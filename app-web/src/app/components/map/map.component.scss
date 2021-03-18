@@ -1,4 +1,51 @@
 .map {
-  height: 90vh;
+  height: 100vh;
   width: 100%;
+}
+
+#map-center-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  margin-right: 10vw;
+  margin-left: -10vw;
+
+  @media only screen and (max-width: 425px) {
+    margin: 0;
+  }
+
+  font-size: 30px;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--um-color-primary-hover);
+  }
+
+  &:active {
+    color: var(--um-color-primary-active);
+  }
+
+}
+
+#botton-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  margin: 20px;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: calc(100vw - 40px);
+
+  @media only screen and (max-width: 425px) {
+    flex-direction: column;
+    flex-direction: column;
+    align-items: flex-start;
+
+    app-route-searchbar {
+      width: 100%;
+    }
+  }
 }

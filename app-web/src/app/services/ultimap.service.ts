@@ -42,4 +42,8 @@ export class UltimapService {
       console.error('Error while fetching route info.', e);
     }
   }
+
+  public removeRoute(): void {
+    if (this.routeInfoBs.value) this.routeInfoBs.next(undefined);
+  }
 }

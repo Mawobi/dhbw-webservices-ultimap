@@ -31,6 +31,8 @@ export class MapComponent implements OnInit {
 
       if (info && info.route.waypoints) {
         this.displayRoute(info.route.waypoints);
+      } else {
+        this.removeRoute();
       }
     });
   }
@@ -81,12 +83,18 @@ export class MapComponent implements OnInit {
     });
 
     // set map center to user location if permission granted
-    this.getUserGeolocation().then(coordinates => {
+    this.centerMapToUserLocation();
+  }
+
+  public async centerMapToUserLocation(): Promise<void> {
+    try {
+      const coordinates = await this.getUserGeolocation();
+
       this.setCenter(coordinates.lat, coordinates.lon);
       this.addMarker(coordinates);
-    }).catch((e: Error) => {
-      console.warn(e.message);
-    });
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   private setCenter(lat: number, lon: number): void {
@@ -133,7 +141,7 @@ export class MapComponent implements OnInit {
 
     // check if marker already exists and remove if yes
     this.map.getLayers().forEach(layer => {
-      if (layer.getClassName() === 'user-geolocation') {
+      if (layer && layer.getClassName() === 'user-geolocation') {
         this.map.removeLayer(layer);
       }
     });
@@ -141,13 +149,17 @@ export class MapComponent implements OnInit {
     this.map.addLayer(markerLayer);
   }
 
-  private displayRoute(waypoints: IWaypoint[]): void {
-    // check if route already exists and remove if yes
+  private removeRoute(): void {
     this.map.getLayers().forEach(layer => {
-      if (layer.getClassName() === 'route-path') {
+      if (layer && layer.getClassName() === 'route-path') {
         this.map.removeLayer(layer);
       }
     });
+  }
+
+  private displayRoute(waypoints: IWaypoint[]): void {
+    // check if route already exists and remove if yes
+    this.removeRoute();
 
     const path = waypoints.map(waypoint => {
       return MapComponent.transformCoordinates(waypoint.lat, waypoint.lon);

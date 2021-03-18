@@ -1,5 +1,5 @@
 <div class="map" id="map"></div>
-<app-route-details></app-route-details>
+<app-route-details (click)="centerMapToRoute()"></app-route-details>
 
 <div id="botton-bar">
   <div (click)="centerMapToUserLocation()" class="card" id="map-center-btn">

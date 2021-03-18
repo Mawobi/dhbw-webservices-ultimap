@@ -97,6 +97,17 @@ export class MapComponent implements OnInit {
     }
   }
 
+  public centerMapToRoute(): void {
+    if (!this.routeInfo || !this.routeInfo.route.waypoints) return;
+
+    const waypoints: IWaypoint[] = this.routeInfo.route.waypoints;
+
+    if (waypoints.length > 0) {
+      const destination = waypoints[waypoints.length - 1];
+      this.setCenter(destination.lat, destination.lon);
+    }
+  }
+
   private setCenter(lat: number, lon: number): void {
     const view = this.map.getView();
     view.setCenter(MapComponent.transformCoordinates(lat, lon));
@@ -189,10 +200,6 @@ export class MapComponent implements OnInit {
     });
 
     this.map.addLayer(routeLayer);
-
-    if (waypoints.length > 0) {
-      const destination = waypoints[waypoints.length - 1];
-      this.setCenter(destination.lat, destination.lon);
-    }
+    this.centerMapToRoute();
   }
 }

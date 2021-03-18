@@ -8,7 +8,7 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication
 public class ServiceRoutingApplication {
 
-    public static void main (String[] args) {
+    public static void main(String[] args) {
         SpringApplication.run(ServiceRoutingApplication.class, args);
     }
 

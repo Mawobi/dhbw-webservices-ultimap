@@ -34,8 +34,8 @@ public class DefaultRoutingProvider implements IRoutingProvider {
     public RouteType getRoute(CoordinateInput start, CoordinateInput destination) {
 
         RouteType routeType = new RouteType();
-        routeType.setDistance(64);
-        routeType.setTime(60);
+        routeType.setDistance(64000);
+        routeType.setTime(3600);
         CoordinateType dummyCoordinatesDHBWMosbach = new CoordinateType();
         dummyCoordinatesDHBWMosbach.setLat(49.360606);
         dummyCoordinatesDHBWMosbach.setLon(9.149051);
@@ -58,8 +58,10 @@ public class DefaultRoutingProvider implements IRoutingProvider {
                         apiToken, start.getLon(), start.getLat(), destination.getLon(), destination.getLat());
                 response = restTemplate.getForObject(url, OpenRouteServiceSimplifiedRouteResponse.class);
 
+                log.info("New Request to OpenRouteService (Route)");
+
             } else {
-                log.error("Canceled Request to OpenWeatherMap (getRoute) to prevent of API-Key overuse.");
+                log.error("Canceled Request to OpenRouteService (getRoute) to prevent of API-Key overuse.");
             }
 
             if (response != null) {
@@ -103,8 +105,10 @@ public class DefaultRoutingProvider implements IRoutingProvider {
                         apiToken, name.replaceAll(" ", "%20"));
                 response = restTemplate.getForObject(url, OpenRouteServiceSimplifiedGeocodeResponse.class);
 
+                log.info("New Request to OpenRouteService (Geocode)");
+
             } else {
-                log.error("Canceled Request to OpenWeatherMap (getGeocode) to prevent of API-Key overuse.");
+                log.error("Canceled Request to OpenRouteService (getGeocode) to prevent of API-Key overuse.");
             }
 
             if (response != null) {

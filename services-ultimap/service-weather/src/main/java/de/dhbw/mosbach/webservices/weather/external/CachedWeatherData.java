@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.Map;
 
 @Data
@@ -17,6 +18,7 @@ public class CachedWeatherData {
     private Map<CoordinateInput, CacheData> data;
 
     public CachedWeatherData() {
+        this.data = new HashMap<>();
     }
 
     public CacheData getCachedData(CoordinateInput coordinateInput) {
@@ -32,7 +34,7 @@ public class CachedWeatherData {
                     }
                 }
             } else {
-                data.remove(cacheDataEntry);
+                data.remove(cacheDataEntry.getKey());
             }
         }
 

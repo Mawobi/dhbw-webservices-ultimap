@@ -48,10 +48,7 @@ public class DefaultRoutingProvider implements IRoutingProvider {
 
             OpenRouteServiceSimplifiedRouteResponse response = null;
 
-            for (Long aLong : lastRouteRequestsList) {
-                if (aLong + 60 < Instant.now().getEpochSecond())
-                    lastRouteRequestsList.remove(aLong);
-            }
+            lastRouteRequestsList.removeIf(aLong -> aLong + 60 < Instant.now().getEpochSecond());
 
             if (lastRouteRequestsList.size() < 35) {
 
@@ -96,10 +93,7 @@ public class DefaultRoutingProvider implements IRoutingProvider {
 
             OpenRouteServiceSimplifiedGeocodeResponse response = null;
 
-            for (Long aLong : lastRouteRequestsList) {
-                if (aLong + 60 < Instant.now().getEpochSecond())
-                    lastRouteRequestsList.remove(aLong);
-            }
+            lastRouteRequestsList.removeIf(aLong -> aLong + 60 < Instant.now().getEpochSecond());
 
             if (lastRouteRequestsList.size() < 95) {
 

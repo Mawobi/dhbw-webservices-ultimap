@@ -61,15 +61,12 @@ public class DefaultWeatherProvider implements IWeatherProvider {
         OpenWeatherMapSimplifiedResponse response = null;
         CacheData cacheData = new CacheData();
 
-        for (Long aLong : lastRequestsList) {
-            if (aLong + 60 < Instant.now().getEpochSecond())
-                lastRequestsList.remove(aLong);
-        }
+        lastRequestsList.removeIf(aLong -> aLong + 60 < Instant.now().getEpochSecond());
 
         if (lastRequestsList.size() < 55) {
 
             lastRequestsList.add(Instant.now().getEpochSecond());
-            String url = String.format("https://api.openweathermap.org/data/2.5/onecall?lat=%s&lon=%s&appid=%s", coordinate.getLat(), coordinate.getLon(), apiToken);
+            String url = String.format("https://api.openweathermap.org/data/2.5/onecall?lat=%s&lon=%s&units=metric&appid=%s", coordinate.getLat(), coordinate.getLon(), apiToken);
             response = restTemplate.getForObject(url, OpenWeatherMapSimplifiedResponse.class);
 
         } else {

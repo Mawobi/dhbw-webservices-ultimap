@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,11 +39,11 @@ public class DefaultRoutingProvider implements IRoutingProvider {
         routeType.setDistance(64000);
         routeType.setTime(3600);
         CoordinateType dummyCoordinatesDHBWMosbach = new CoordinateType();
-        dummyCoordinatesDHBWMosbach.setLat(49.360606);
-        dummyCoordinatesDHBWMosbach.setLon(9.149051);
+        dummyCoordinatesDHBWMosbach.setLat(49.351978);
+        dummyCoordinatesDHBWMosbach.setLon(9.145870);
         CoordinateType dummyCoordinatesDHBWBadMergentheim = new CoordinateType();
-        dummyCoordinatesDHBWBadMergentheim.setLat(49.501883);
-        dummyCoordinatesDHBWBadMergentheim.setLon(9.776552);
+        dummyCoordinatesDHBWBadMergentheim.setLat(49.490200);
+        dummyCoordinatesDHBWBadMergentheim.setLon(9.773150);
         routeType.setWaypoints(new ArrayList<>(Arrays.asList(dummyCoordinatesDHBWMosbach, dummyCoordinatesDHBWBadMergentheim)));
 
         if (!apiToken.equals("DUMMY")) {
@@ -88,8 +90,8 @@ public class DefaultRoutingProvider implements IRoutingProvider {
     public CoordinateType getGeocode(String name) {
 
         CoordinateType coordinateType = new CoordinateType();
-        coordinateType.setLat(49.360606);
-        coordinateType.setLon(9.149051);
+        coordinateType.setLat(49.351978);
+        coordinateType.setLon(9.145870);
 
         if (!apiToken.equals("DUMMY")) {
 
@@ -102,7 +104,7 @@ public class DefaultRoutingProvider implements IRoutingProvider {
                 lastRouteRequestsList.add(Instant.now().getEpochSecond());
                 String url = String.format(
                         "https://api.openrouteservice.org/geocode/search?api_key=%s&text=%s",
-                        apiToken, name.replaceAll(" ", "%20"));
+                        apiToken, URLEncoder.encode(name, StandardCharsets.UTF_8));
                 response = restTemplate.getForObject(url, OpenRouteServiceSimplifiedGeocodeResponse.class);
 
                 log.info("New Request to OpenRouteService (Geocode)");

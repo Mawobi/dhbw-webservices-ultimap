@@ -6,5 +6,6 @@ import de.dhbw.mosbach.webservices.ultimap.graphql.types.RouteType;
 
 public interface IRoutingProvider {
     RouteType getRoute(CoordinateInput start, CoordinateInput destination);
+
     CoordinateType getGeocode(String name);
 }

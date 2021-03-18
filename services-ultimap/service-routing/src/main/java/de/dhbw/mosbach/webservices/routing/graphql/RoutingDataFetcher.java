@@ -11,12 +11,12 @@ import java.util.Arrays;
 @DgsComponent
 public class RoutingDataFetcher {
     @DgsData(parentType = "Query", field = "geocode")
-    public CoordinateType geocode (String name) {
+    public CoordinateType geocode(String name) {
         return new CoordinateType(49.490, 9.773);
     }
 
     @DgsData(parentType = "Query", field = "route")
-    public RouteType getRoute (CoordinateInput start, CoordinateInput finish) {
+    public RouteType getRoute(CoordinateInput start, CoordinateInput finish) {
         return new RouteType(
                 60,
                 50000,

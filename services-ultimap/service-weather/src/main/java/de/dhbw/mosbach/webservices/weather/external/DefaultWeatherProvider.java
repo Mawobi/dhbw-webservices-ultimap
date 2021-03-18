@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -21,11 +23,14 @@ public class DefaultWeatherProvider implements IWeatherProvider {
     @Value("${ultimap.weather.cache.validity}")
     private int cacheValidFor;
 
+    List<Long> lastRequestsList;
+
     private CachedWeatherData cache;
 
     public DefaultWeatherProvider(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
         this.cache = new CachedWeatherData();
+        this.lastRequestsList = new ArrayList<>();
     }
 
     @Override
@@ -34,7 +39,6 @@ public class DefaultWeatherProvider implements IWeatherProvider {
         CacheData cacheData = cache.getCachedData(coordinate);
 
         if (!apiToken.equals("DUMMY")) {
-
             // Refresh cache if necessary
             long currentTimestamp = Instant.now().getEpochSecond();
 
@@ -53,10 +57,24 @@ public class DefaultWeatherProvider implements IWeatherProvider {
     }
 
     private CacheData refreshData(CoordinateInput coordinate, int timestamp) {
-        // https://openweathermap.org/api/hourly-forecast
-        String url = String.format("https://api.openweathermap.org/data/2.5/onecall?lat=%s&lon=%s&appid=%s", coordinate.getLat(), coordinate.getLon(), apiToken);
-        OpenWeatherMapSimplifiedResponse response = restTemplate.getForObject(url, OpenWeatherMapSimplifiedResponse.class);
+
+        OpenWeatherMapSimplifiedResponse response = null;
         CacheData cacheData = new CacheData();
+
+        for (Long aLong : lastRequestsList) {
+            if (aLong + 60 < Instant.now().getEpochSecond())
+                lastRequestsList.remove(aLong);
+        }
+
+        if (lastRequestsList.size() < 55) {
+
+            lastRequestsList.add(Instant.now().getEpochSecond());
+            String url = String.format("https://api.openweathermap.org/data/2.5/onecall?lat=%s&lon=%s&appid=%s", coordinate.getLat(), coordinate.getLon(), apiToken);
+            response = restTemplate.getForObject(url, OpenWeatherMapSimplifiedResponse.class);
+
+        } else {
+            log.error("Canceled Request to OpenWeatherMap to prevent of API-Key overuse.");
+        }
 
         if (response != null) {
             cacheData.setTimestamp(Instant.now().getEpochSecond());

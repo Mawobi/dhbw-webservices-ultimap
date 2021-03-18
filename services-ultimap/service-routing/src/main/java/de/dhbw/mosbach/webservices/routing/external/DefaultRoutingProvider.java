@@ -19,12 +19,15 @@ import java.util.List;
 @Service
 public class DefaultRoutingProvider implements IRoutingProvider {
     private final RestTemplate restTemplate;
-
+    List<Long> lastRouteRequestsList;
+    List<Long> lastGeocodeRequestsList;
     @Value("${ultimap.routing.token}")
     private String apiToken;
 
     public DefaultRoutingProvider(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
+        this.lastRouteRequestsList = new ArrayList<>();
+        this.lastGeocodeRequestsList = new ArrayList<>();
     }
 
     @Override
@@ -43,10 +46,24 @@ public class DefaultRoutingProvider implements IRoutingProvider {
 
         if (!apiToken.equals("DUMMY")) {
 
-            String url = String.format(
-                    "https://api.openrouteservice.org/v2/directions/driving-car?api_key=%s&start=%s,%s&end=%s,%s",
-                    apiToken, start.getLon(), start.getLat(), destination.getLon(), destination.getLat());
-            OpenRouteServiceSimplifiedRouteResponse response = restTemplate.getForObject(url, OpenRouteServiceSimplifiedRouteResponse.class);
+            OpenRouteServiceSimplifiedRouteResponse response = null;
+
+            for (Long aLong : lastRouteRequestsList) {
+                if (aLong + 60 < Instant.now().getEpochSecond())
+                    lastRouteRequestsList.remove(aLong);
+            }
+
+            if (lastRouteRequestsList.size() < 35) {
+
+                lastRouteRequestsList.add(Instant.now().getEpochSecond());
+                String url = String.format(
+                        "https://api.openrouteservice.org/v2/directions/driving-car?api_key=%s&start=%s,%s&end=%s,%s",
+                        apiToken, start.getLon(), start.getLat(), destination.getLon(), destination.getLat());
+                response = restTemplate.getForObject(url, OpenRouteServiceSimplifiedRouteResponse.class);
+
+            } else {
+                log.error("Canceled Request to OpenWeatherMap (getRoute) to prevent of API-Key overuse.");
+            }
 
             if (response != null) {
                 List<CoordinateType> coordinateTypeList = new ArrayList<>();
@@ -56,7 +73,7 @@ public class DefaultRoutingProvider implements IRoutingProvider {
                     coordinateType.setLat(coordinate[1]);
                     coordinateTypeList.add(coordinateType);
                 }
-                
+
                 routeType.setDistance(response.getFeatures()[0].getProperties().getSummary().getDistance());
                 routeType.setTime(response.getFeatures()[0].getProperties().getSummary().getDuration());
                 routeType.setWaypoints(coordinateTypeList);
@@ -77,17 +94,31 @@ public class DefaultRoutingProvider implements IRoutingProvider {
 
         if (!apiToken.equals("DUMMY")) {
 
-            String url = String.format(
-                    "https://api.openrouteservice.org/geocode/search?api_key=%s&text=%s",
-                    apiToken, name.replaceAll(" ", "%20"));
-            OpenRouteServiceSimplifiedGeocodeResponse response = restTemplate.getForObject(url, OpenRouteServiceSimplifiedGeocodeResponse.class);
+            OpenRouteServiceSimplifiedGeocodeResponse response = null;
+
+            for (Long aLong : lastRouteRequestsList) {
+                if (aLong + 60 < Instant.now().getEpochSecond())
+                    lastRouteRequestsList.remove(aLong);
+            }
+
+            if (lastRouteRequestsList.size() < 95) {
+
+                lastRouteRequestsList.add(Instant.now().getEpochSecond());
+                String url = String.format(
+                        "https://api.openrouteservice.org/geocode/search?api_key=%s&text=%s",
+                        apiToken, name.replaceAll(" ", "%20"));
+                response = restTemplate.getForObject(url, OpenRouteServiceSimplifiedGeocodeResponse.class);
+
+            } else {
+                log.error("Canceled Request to OpenWeatherMap (getGeocode) to prevent of API-Key overuse.");
+            }
 
             if (response != null) {
 
-                if(response.getFeatures().length > 0){
+                if (response.getFeatures().length > 0) {
                     coordinateType.setLon(response.getFeatures()[0].getGeometry().getCoordinates()[0]);
                     coordinateType.setLat(response.getFeatures()[0].getGeometry().getCoordinates()[1]);
-                }else{
+                } else {
                     log.error("Got no Geocode from OpenRouteService for input:" + name);
                 }
 

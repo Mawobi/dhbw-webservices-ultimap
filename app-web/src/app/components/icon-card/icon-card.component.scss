@@ -1,0 +1,16 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  font-size: 30px;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--um-color-primary-hover);
+  }
+
+  &:active {
+    color: var(--um-color-primary-active);
+  }
+}

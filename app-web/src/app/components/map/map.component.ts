@@ -41,6 +41,10 @@ export class MapComponent implements OnInit {
     const waypoints = this.routeInfo?.route.waypoints;
     this.map.displayRoute(waypoints ?? []);
 
-    if (waypoints && waypoints.length > 0) this.map.addMarker(waypoints[waypoints.length - 1]);
+    if (waypoints && waypoints.length > 0) {
+      this.map.addMarker(waypoints[waypoints.length - 1]);
+    } else {
+      this.map.removeMarker();
+    }
   }
 }

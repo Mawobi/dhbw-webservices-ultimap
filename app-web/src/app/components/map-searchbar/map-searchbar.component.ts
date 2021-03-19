@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {IUltimapRequest} from '../../../types/graphQL';
 import {UltimapService} from '../../services/ultimap.service';
+import {UtilityService} from '../../services/utility.service';
 
 @Component({
   selector: 'app-map-searchbar',
@@ -13,7 +14,7 @@ export class MapSearchbarComponent {
     destination: ''
   };
 
-  constructor(private ultimap: UltimapService) {
+  constructor(private ultimap: UltimapService, private utility: UtilityService) {
     ultimap.routeInfo.subscribe(routeInfo => {
       if (routeInfo) {
         this.request.start = routeInfo.route.start;
@@ -54,12 +55,15 @@ export class MapSearchbarComponent {
   public async queryRoute(): Promise<void> {
     if (!this.request.start || !this.request.destination) return;
 
+    await this.utility.showToast('Route wird berechnet...');
     console.log(`Query route for start ${this.request.start} and destination ${this.request.destination}`);
 
-    try {
-      await this.ultimap.queryRouteInfo(this.request);
-    } catch (e) {
-      console.error(e);
+    const fetched = await this.ultimap.queryRouteInfo(this.request);
+
+    if (fetched) {
+      await this.utility.showToast('Route erfolgreich berechnet.');
+    } else {
+      await this.utility.showToast('Beim Berechnen der Route ist ein Fehler aufgetreten.');
     }
 
   }

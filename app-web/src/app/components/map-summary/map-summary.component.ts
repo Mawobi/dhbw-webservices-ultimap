@@ -24,5 +24,6 @@ export class MapSummaryComponent {
     if (!waypoints || waypoints.length === 0) return;
 
     this.map.setCenter(waypoints[waypoints.length - 1]);
+    this.map.addMarker(waypoints[waypoints.length - 1]);
   }
 }

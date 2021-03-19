@@ -12,6 +12,7 @@ export class HomeComponent {
   }
 
   public async setCenterToUser(): Promise<void> {
-    await this.map.setCenterToUser();
+    const waypoint = await this.map.setCenterToUser();
+    if (waypoint) this.map.addMarker(waypoint);
   }
 }

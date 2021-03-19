@@ -162,6 +162,18 @@ export class MapService {
   }
 
   /**
+   * Removes the currently displayed marker from the map if one exists.
+   */
+  public removeMarker(): void {
+    for (const layer of this.map.getLayers().getArray()) {
+      if (layer.getClassName() === MapService.MARKER_LAYER_NAME) {
+        this.map.removeLayer(layer);
+        break;
+      }
+    }
+  }
+
+  /**
    * Updates the map to either light or dark mode depending on teh current theme.
    */
   private updateMapTheme(): void {
@@ -181,18 +193,6 @@ export class MapService {
   private removeRoute(): void {
     for (const layer of this.map.getLayers().getArray()) {
       if (layer.getClassName() === MapService.ROUTE_LAYER_NAME) {
-        this.map.removeLayer(layer);
-        break;
-      }
-    }
-  }
-
-  /**
-   * Removes the currently displayed marker from the map if one exists.
-   */
-  private removeMarker(): void {
-    for (const layer of this.map.getLayers().getArray()) {
-      if (layer.getClassName() === MapService.MARKER_LAYER_NAME) {
         this.map.removeLayer(layer);
         break;
       }

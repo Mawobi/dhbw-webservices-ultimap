@@ -23,8 +23,9 @@ export class UltimapService {
   /**
    * Queries the given request from the ultimap GraphQL API with all available data and updates the routeInfoBs BehaviourSubject.
    * @param request The request to pass to the query as input.
+   * @returns Promise that returns true of route could be fetched, false otherwise.
    */
-  public async queryRouteInfo(request: IUltimapRequest): Promise<void> {
+  public async queryRouteInfo(request: IUltimapRequest): Promise<boolean> {
     const fuelInput = await this.queryCarTypeAndConsumption();
 
     try {
@@ -45,8 +46,10 @@ export class UltimapService {
       }).toPromise();
 
       this.routeInfoBs.next(response.data.routeInfo);
+      return true;
     } catch (e) {
       console.error('Error while fetching route info.', e);
+      return false;
     }
   }
 
@@ -85,7 +88,7 @@ export class UltimapService {
       const response = await this.apollo.query<IUltimapCarInfoResponse>({
         query: gql`
           {
-            carInfo(carId: ${carSetting.value}) {
+            carInfo(carId: ${value.value}) {
               id, consumption, typ
             }
           }

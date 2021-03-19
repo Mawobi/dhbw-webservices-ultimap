@@ -37,26 +37,25 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @SpringBootTest
 class ServiceUltimapApplicationTests {
     @Autowired
+    DgsQueryExecutor dgsQueryExecutor;
+    @Autowired
     private RestTemplate template;
     private MockRestServiceServer mockServer;
 
-    @Autowired
-    DgsQueryExecutor dgsQueryExecutor;
-
     @BeforeEach
-    void setUp () {
+    void setUp() {
         mockServer = MockRestServiceServer.createServer(template);
     }
 
     @Test
-    void contextLoads () {
+    void contextLoads() {
     }
 
     @Test
-    void fullTest () {
+    void fullTest() {
         // region expected result
         UltimapType expected = new UltimapType(
-                new RouteInfoType(60, 50_000, Arrays.asList(
+                new RouteInfoType("DHBW Mosbach", "(49.490200,9.773150)", 60, 50_000, Arrays.asList(
                         new CoordinateType(49.351978, 9.145870),
                         new CoordinateType(49.490200, 9.773150)
                 )),
@@ -67,10 +66,10 @@ class ServiceUltimapApplicationTests {
 
         //region expected requests
         expectGraphQlRequest("routing", "geocode");
-        expectGraphQlRequest("routing","route");
+        expectGraphQlRequest("routing", "route");
         expectGraphQlRequest("carinfo", "fuel");
         for (int i = 0 ; i < 10 ; i++) {
-            expectGraphQlRequest("weather","weather" + i);
+            expectGraphQlRequest("weather", "weather" + i);
         }
         //endregion
 
@@ -85,7 +84,7 @@ class ServiceUltimapApplicationTests {
                 RouteInfoGraphQLQuery.newRequest().input(input).build(),
                 new RouteInfoProjectionRoot()
                         .costs().fuelCosts().wearFlatrate().totalConsumption().parent()
-                        .route().distance().duration().waypoints().
+                        .route().start().destination().distance().duration().waypoints().
                                 lat().lon().root()
                         .weather().min().max().avg().rain()
         );
@@ -99,7 +98,7 @@ class ServiceUltimapApplicationTests {
         assertEquals(expected, received);
     }
 
-    private void expectGraphQlRequest (String serviceName, String responseTemplate) {
+    private void expectGraphQlRequest(String serviceName, String responseTemplate) {
         mockServer
                 .expect(requestTo("http://ultimap-" + serviceName + ":8080/graphql"))
                 .andExpect(method(HttpMethod.POST))
@@ -108,7 +107,7 @@ class ServiceUltimapApplicationTests {
                 .andRespond(withSuccess(loadJsonDocument(responseTemplate), MediaType.APPLICATION_JSON));
     }
 
-    private String loadJsonDocument (String name) {
+    private String loadJsonDocument(String name) {
         try {
             InputStream jsonDocument = this.getClass().getClassLoader().getResourceAsStream("testdata/jsondocs/" + name + ".json");
             assert jsonDocument != null;

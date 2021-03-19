@@ -60,7 +60,7 @@ class ServiceUltimapApplicationTests {
                         new CoordinateType(49.351978, 9.145870),
                         new CoordinateType(49.490200, 9.773150)
                 )),
-                new CarCostInfoType(4150.0, 5556.85, 3000.0),
+                new CarCostInfoType(4.2, 5.557, 3.0),
                 new WeatherInfoType(-5.0, 4.2, 0.89, 0.6)
         );
         //endregion

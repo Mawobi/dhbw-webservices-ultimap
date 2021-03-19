@@ -110,9 +110,9 @@ public class UltimapGraphQLTest {
                                     .build())
                 .costs(CarCostInfoType
                                .newBuilder()
-                               .totalConsumption(4150.0)
-                               .fuelCosts(4150 * 1.439 /*consumption x fuelCost per litre*/)
-                               .wearFlatrate(3000.0)
+                               .totalConsumption(4.2)
+                               .fuelCosts(4.2 * 1.439 /*consumption x fuelCost per litre*/)
+                               .wearFlatrate(3.0)
                                .build())
                 .weather(WeatherInfoType
                                  .newBuilder()

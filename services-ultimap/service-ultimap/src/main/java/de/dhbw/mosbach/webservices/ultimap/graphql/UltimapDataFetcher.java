@@ -44,6 +44,8 @@ public class UltimapDataFetcher {
         toReturn.setRoute(
                 RouteInfoType
                         .newBuilder()
+                        .start(input.getGeopoints().getStart())
+                        .destination(input.getGeopoints().getDestination())
                         .distance(receivedRoute.getDistance())
                         .duration(receivedRoute.getTime())
                         .waypoints(receivedRoute.getWaypoints().stream().map(ConversionUtilKt::toUltimapCoordinate).collect(Collectors.toList()))

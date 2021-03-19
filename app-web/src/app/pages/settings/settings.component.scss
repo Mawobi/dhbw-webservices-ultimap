@@ -17,6 +17,7 @@
   &__content {
     border: 1px solid var(--um-color-border);
     padding: 12px;
+    width: fit-content;
 
     &--input {
       padding: 0;
@@ -30,7 +31,6 @@
       border: none;
       background: transparent;
       font-size: 15px;
-      width: 100%;
     }
   }
 

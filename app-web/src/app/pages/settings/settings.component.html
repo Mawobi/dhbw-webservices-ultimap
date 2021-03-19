@@ -11,7 +11,8 @@
           <option *ngFor="let c of availableCars" [value]="c.id">{{ c.name }}</option>
         </select>
 
-        <input *ngIf="carSetting.isConsumption" [(ngModel)]="carSetting.value" placeholder="Verbrauch..." type="number">
+        <input *ngIf="carSetting.isConsumption" [(ngModel)]="carSetting.value" min="0" placeholder="Verbrauch..."
+               step="0.1" type="number">
       </div>
 
       <div *ngIf="carSetting.isConsumption" class="setting__content setting__content--input card fuelType">

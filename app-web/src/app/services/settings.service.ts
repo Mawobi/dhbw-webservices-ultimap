@@ -20,7 +20,7 @@ export class SettingsService {
         unmappedSettings.forEach(setting => {
           if (setting.key === SettingsKey.CAR) {
             const temp = setting.value as ICarSetting;
-            if (temp.value) temp.value = Number.parseInt(String(temp.value), 10);
+            if (temp.value) temp.value = Number.parseFloat(String(temp.value));
           }
         });
 

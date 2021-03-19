@@ -35,7 +35,6 @@ export class SettingsComponent {
       await this.utility.showToast('Bitte fülle alle Felder aus.');
       return;
     }
-    if (!this.carSetting.isConsumption) delete this.carSetting.type;
 
     const saved = await this.settingsService.set({key: SettingsKey.CAR, value: this.carSetting});
     if (!saved) {

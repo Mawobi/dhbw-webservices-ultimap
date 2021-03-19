@@ -105,7 +105,7 @@ public class UltimapDataFetcher {
             toReturn.setAvg(toReturn.getAvg() + (temperature / samples));
 
             // If the rain is over some threshold
-            if (weatherAtCheckpoint.getRain() >= 0) {
+            if (weatherAtCheckpoint.getRain() > 0) {
                 // then increase the rain coverage for the full route
                 toReturn.setRain(toReturn.getRain() + (1.0 / samples));
             }

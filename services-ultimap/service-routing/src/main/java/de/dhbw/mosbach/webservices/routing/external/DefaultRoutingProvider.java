@@ -1,5 +1,6 @@
 package de.dhbw.mosbach.webservices.routing.external;
 
+import com.netflix.graphql.dgs.exceptions.DgsEntityNotFoundException;
 import de.dhbw.mosbach.webservices.routing.external.geocoderesponse.OpenRouteServiceSimplifiedGeocodeResponse;
 import de.dhbw.mosbach.webservices.routing.external.routeresponse.OpenRouteServiceSimplifiedRouteResponse;
 import de.dhbw.mosbach.webservices.ultimap.graphql.types.CoordinateInput;
@@ -58,7 +59,12 @@ public class DefaultRoutingProvider implements IRoutingProvider {
                 String url = String.format(
                         "https://api.openrouteservice.org/v2/directions/driving-car?api_key=%s&start=%s,%s&end=%s,%s",
                         apiToken, start.getLon(), start.getLat(), destination.getLon(), destination.getLat());
-                response = restTemplate.getForObject(url, OpenRouteServiceSimplifiedRouteResponse.class);
+                try {
+                    response = restTemplate.getForObject(url, OpenRouteServiceSimplifiedRouteResponse.class);
+                } catch (RuntimeException exception) {
+                    exception.printStackTrace();
+                    throw new DgsEntityNotFoundException("Request to OpenRouteService (Route) failed!");
+                }
 
                 log.info("New Request to OpenRouteService (Route)");
 
@@ -105,7 +111,12 @@ public class DefaultRoutingProvider implements IRoutingProvider {
                 String url = String.format(
                         "https://api.openrouteservice.org/geocode/search?api_key=%s&text=%s",
                         apiToken, URLEncoder.encode(name, StandardCharsets.UTF_8));
-                response = restTemplate.getForObject(url, OpenRouteServiceSimplifiedGeocodeResponse.class);
+                try {
+                    response = restTemplate.getForObject(url, OpenRouteServiceSimplifiedGeocodeResponse.class);
+                } catch (RuntimeException exception) {
+                    exception.printStackTrace();
+                    throw new DgsEntityNotFoundException("Request to OpenRouteService (Geocode) failed!");
+                }
 
                 log.info("New Request to OpenRouteService (Geocode)");
 

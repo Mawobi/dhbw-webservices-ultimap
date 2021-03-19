@@ -1,5 +1,6 @@
 package de.dhbw.mosbach.webservices.weather.external;
 
+import com.netflix.graphql.dgs.exceptions.DgsEntityNotFoundException;
 import de.dhbw.mosbach.webservices.ultimap.graphql.types.CoordinateInput;
 import de.dhbw.mosbach.webservices.ultimap.graphql.types.WeatherType;
 import de.dhbw.mosbach.webservices.weather.external.response.OpenWeatherMapSimplifiedResponse;
@@ -67,7 +68,12 @@ public class DefaultWeatherProvider implements IWeatherProvider {
 
             lastRequestsList.add(Instant.now().getEpochSecond());
             String url = String.format("https://api.openweathermap.org/data/2.5/onecall?lat=%s&lon=%s&units=metric&appid=%s", coordinate.getLat(), coordinate.getLon(), apiToken);
-            response = restTemplate.getForObject(url, OpenWeatherMapSimplifiedResponse.class);
+            try {
+                response = restTemplate.getForObject(url, OpenWeatherMapSimplifiedResponse.class);
+            } catch (RuntimeException exception) {
+                exception.printStackTrace();
+                throw new DgsEntityNotFoundException("Request to OpenWeatherMap failed!");
+            }
 
         } else {
             log.error("Canceled Request to OpenWeatherMap to prevent of API-Key overuse.");

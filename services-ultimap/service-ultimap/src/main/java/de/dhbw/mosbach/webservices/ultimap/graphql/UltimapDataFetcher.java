@@ -64,8 +64,8 @@ public class UltimapDataFetcher {
             return null;
         }
 
-        double wearFlatrate = receivedRoute.getDistance() * 0.06; // 6 ct per kilometre (https://unser-auto.org/fahrkostenrechner/)
-        double totalConsumption = receivedRoute.getDistance() * input.getFuel().getConsumption() / 100.0;
+        double wearFlatrate = (receivedRoute.getDistance() / 1000.0) * 0.06; // 6 ct per kilometre (https://unser-auto.org/fahrkostenrechner/)
+        double totalConsumption = receivedRoute.getDistance() * input.getFuel().getConsumption() / (100.0 * 1000.0);
         double fuelCosts = totalConsumption * carinfoProvider.getFuel(input.getFuel().getTyp()).getPrice();
 
         return CarCostInfoType

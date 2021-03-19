@@ -1,0 +1,62 @@
+.content {
+  padding: 60px 30px;
+}
+
+.settings {
+  display: grid;
+  gap: 20px;
+  padding-top: 20px;
+}
+
+.setting {
+  label {
+    display: block;
+    padding-bottom: 6px;
+  }
+
+  &__content {
+    border: 1px solid var(--um-color-border);
+    padding: 12px;
+
+    &--input {
+      padding: 0;
+
+      input, select {
+        padding: 12px;
+      }
+    }
+
+    input, select {
+      border: none;
+      background: transparent;
+      font-size: 15px;
+      width: 100%;
+    }
+  }
+
+  &__description {
+    padding-top: 20px;
+  }
+}
+
+.save-btn {
+  margin: 80px auto 0 auto;
+
+  @media only screen and (min-width: 768px) {
+    margin: 80px 0 0 0;
+  }
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  padding-top: 10px;
+
+  label {
+    margin-right: 10px;
+  }
+}
+
+.fuelType {
+  margin-top: 10px;
+}

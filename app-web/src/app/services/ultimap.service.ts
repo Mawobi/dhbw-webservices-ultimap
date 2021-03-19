@@ -1,35 +1,42 @@
 import {Injectable} from '@angular/core';
-import {Apollo, gql} from 'apollo-angular';
-import {IFuelInfo, IRouteInfo, IUltimapRouteResponse} from '../types/UltimapGraphQL';
 import {BehaviorSubject} from 'rxjs';
+import {IRouteInfo} from '../../types/route';
+import {Apollo, gql} from 'apollo-angular';
+import {IUltimapCarInfoResponse, IUltimapCarModelResponse, IUltimapRequest, IUltimapRouteResponse} from '../../types/graphQL';
+import {ICar} from '../../types/costs';
+import {SettingsService} from './settings.service';
+import {ICarSetting, SettingsKey} from '../../types/settings';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UltimapService {
+  /** Holds the currently active routeInfo. */
   private routeInfoBs = new BehaviorSubject<IRouteInfo | undefined>(undefined);
+
+  /** The Observable of the currently active routeInfo. */
   public routeInfo = this.routeInfoBs.asObservable();
 
-  constructor(private apollo: Apollo) {
+  constructor(private apollo: Apollo, private settingsService: SettingsService) {
   }
 
-  public async queryRouteInfo(start: string, destination: string, departure?: Date, fuel?: IFuelInfo): Promise<void> {
-    let fuelInput;
-
-    if (fuel && fuel.consumption != null && fuel.typ) {
-      fuelInput = `fuel:{consumption: ${fuel.consumption},typ:${fuel.typ}`;
-    }
+  /**
+   * Queries the given request from the ultimap GraphQL API with all available data and updates the routeInfoBs BehaviourSubject.
+   * @param request The request to pass to the query as input.
+   */
+  public async queryRouteInfo(request: IUltimapRequest): Promise<void> {
+    const fuelInput = await this.queryCarTypeAndConsumption();
 
     try {
       const response = await this.apollo.query<IUltimapRouteResponse>({
         query: gql`
           {
-            routeInfo(input: { geopoints: {start: "${start}", destination: "${destination}"}
-                             ${departure ? ',departure:' + Math.round(departure.getTime() / 1000) : ''}
-                             ${fuelInput ? ',' + fuelInput : ''}
+            routeInfo(input: { geopoints: {start: "${request.start}", destination: "${request.destination}"}
+                             ${request.departure ? ',departure:' + Math.round(request.departure.getTime() / 1000) : ''}
+                             ${fuelInput && fuelInput.typ && fuelInput.consumption ? ',fuel: {consumption:' + fuelInput.consumption + ', typ:' + fuelInput.typ + '}' : ''}
             })
             {
-              route {distance, duration, waypoints {lat, lon}}
+              route {start, destination, distance, duration, waypoints {lat, lon}}
               costs {totalConsumption, fuelCosts, wearFlatrate}
               weather {min, max, avg, rain}
             }
@@ -43,7 +50,52 @@ export class UltimapService {
     }
   }
 
+  /**
+   * Removes the current routeInfo if its currently defined.
+   */
   public removeRoute(): void {
     if (this.routeInfoBs.value) this.routeInfoBs.next(undefined);
+  }
+
+  public async queryCars(): Promise<ICar[]> {
+    try {
+      const response = await this.apollo.query<IUltimapCarModelResponse>({
+        query: gql`
+            {
+              carModels {id, name, consumption, typ}
+            }
+        `,
+      }).toPromise();
+
+      return response.data.carModels;
+    } catch (e) {
+      console.error('Error while fetching car models.', e);
+      return [];
+    }
+  }
+
+  private async queryCarTypeAndConsumption(): Promise<ICar | undefined> {
+    const carSetting = this.settingsService.get(SettingsKey.CAR);
+    if (!carSetting || carSetting.value == null) return undefined;
+
+    const value = carSetting.value as ICarSetting;
+    if (value.isConsumption) return {consumption: value.value, typ: value.type, id: -1};
+
+    try {
+      const response = await this.apollo.query<IUltimapCarInfoResponse>({
+        query: gql`
+          {
+            carInfo(carId: ${carSetting.value}) {
+              id, consumption, typ
+            }
+          }
+        `,
+      }).toPromise();
+
+      return response.data.carInfo;
+    } catch (e) {
+      console.error('Error while fetching car request information.', e);
+      return undefined;
+    }
   }
 }

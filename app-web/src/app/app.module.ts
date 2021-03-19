@@ -1,44 +1,42 @@
-import {LOCALE_ID, NgModule} from '@angular/core';
+import {CUSTOM_ELEMENTS_SCHEMA, LOCALE_ID, NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
-import {SharedModule} from './modules/shared.module';
+import {HomeComponent} from './pages/home/home.component';
+import {SettingsComponent} from './pages/settings/settings.component';
+import {GraphQLModule} from './graphql.module';
+import {HttpClientModule} from '@angular/common/http';
+import {MapComponent} from './components/map/map.component';
+import {MapSearchbarComponent} from './components/map-searchbar/map-searchbar.component';
+import {FormsModule} from '@angular/forms';
+import {MapSummaryComponent} from './components/map-summary/map-summary.component';
+import {IconCardComponent} from './components/icon-card/icon-card.component';
 import {registerLocaleData} from '@angular/common';
 import locale_de from '@angular/common/locales/de';
-
-import {HttpClientModule} from '@angular/common/http';
-import {APOLLO_OPTIONS} from 'apollo-angular';
-import {HttpLink} from 'apollo-angular/http';
-import {InMemoryCache} from '@apollo/client/core';
 
 registerLocaleData(locale_de);
 
 @NgModule({
   declarations: [
     AppComponent,
+    HomeComponent,
+    SettingsComponent,
+    MapComponent,
+    MapSearchbarComponent,
+    MapSummaryComponent,
+    IconCardComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
+    GraphQLModule,
     HttpClientModule,
-    SharedModule,
+    FormsModule
   ],
-  providers: [{
-    provide: APOLLO_OPTIONS,
-    useFactory: (httpLink: HttpLink) => {
-      return {
-        cache: new InMemoryCache(),
-        link: httpLink.create({
-          uri: 'http://server.menkalian.de/graphql',
-        }),
-      };
-    },
-    deps: [HttpLink],
-  },
-    {provide: LOCALE_ID, useValue: 'de'},
-  ],
-  bootstrap: [AppComponent]
+  providers: [{provide: LOCALE_ID, useValue: 'de'}],
+  bootstrap: [AppComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppModule {
 }

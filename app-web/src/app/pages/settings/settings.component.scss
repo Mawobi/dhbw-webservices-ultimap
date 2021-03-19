@@ -18,12 +18,14 @@
     border: 1px solid var(--um-color-border);
     padding: 12px;
     width: fit-content;
+    max-width: 100%;
 
     &--input {
       padding: 0;
 
       input, select {
         padding: 12px;
+        width: 100%;
       }
     }
 
@@ -59,4 +61,17 @@
 
 .fuelType {
   margin-top: 10px;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  padding-bottom: 40px;
+  cursor: pointer;
+  width: fit-content;
+
+  ion-icon {
+    margin-right: 10px;
+  }
 }

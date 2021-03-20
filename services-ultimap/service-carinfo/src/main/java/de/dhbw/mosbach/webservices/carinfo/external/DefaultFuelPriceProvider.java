@@ -24,7 +24,7 @@ public class DefaultFuelPriceProvider implements IFuelPriceProvider {
 
     private CachedPriceData cache;
 
-    public DefaultFuelPriceProvider (RestTemplate restTemplate) {
+    public DefaultFuelPriceProvider(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
         cache = new CachedPriceData();
         cache.setTimestamp(0);
@@ -32,7 +32,7 @@ public class DefaultFuelPriceProvider implements IFuelPriceProvider {
 
 
     @Override
-    public double getFuelPrice (FuelType type) {
+    public double getFuelPrice(FuelType type) {
         if (!apiToken.equals("DUMMY")) {
 
             // Refresh cache if necessary
@@ -66,21 +66,26 @@ public class DefaultFuelPriceProvider implements IFuelPriceProvider {
         cache.setTimestamp(0);
     }
 
-    private void refreshData () {
+    private void refreshData() {
         // https://creativecommons.tankerkoenig.de/
-        String url = String.format("https://creativecommons.tankerkoenig.de/json/prices.php?ids=%s&apikey=%s", stationId, apiToken);
-        TankerkoenigSimplifiedResponse response = restTemplate.getForObject(url, TankerkoenigSimplifiedResponse.class);
-        if (response != null) {
-            if (response.isOk()) {
-                cache = response.getPrices().get(stationId).combine(cache);
+        try {
+            String url = String.format("https://creativecommons.tankerkoenig.de/json/prices.php?ids=%s&apikey=%s", stationId, apiToken);
+            TankerkoenigSimplifiedResponse response = restTemplate.getForObject(url, TankerkoenigSimplifiedResponse.class);
+            if (response != null) {
+                if (response.isOk()) {
+                    cache = response.getPrices().get(stationId).combine(cache);
+                } else {
+                    log.warn("Tankerkoenig responded with an error: {}", response.getMessage());
+                }
             } else {
-                log.warn("Tankerkoenig responded with an error: {}", response.getMessage());
+                log.error("No Response from Tankerkoenig");
             }
-        } else {
-            log.error("No Response from Tankerkoenig");
+        } catch (Exception ex) {
+            log.error("Error when requesting prices from Tankerkoenig API", ex);
         }
 
         // Mark cache as refreshed anyway to prevent too many requests
+        log.warn("Refreshing existing cache {}", cache);
         cache = new CachedPriceData().combine(cache);
     }
 }

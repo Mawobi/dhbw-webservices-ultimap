@@ -6,6 +6,11 @@ import {UltimapService} from '../../services/ultimap.service';
 import {take} from 'rxjs/operators';
 import {UtilityService} from '../../services/utility.service';
 
+interface ISelectOption {
+  value: string;
+  name: string;
+}
+
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
@@ -14,7 +19,14 @@ import {UtilityService} from '../../services/utility.service';
 export class SettingsComponent {
   public carSetting: ICarSetting = {value: undefined, isConsumption: false};
   public availableCars: ICar[] = [];
-  public fuelTypes: FuelType[] = [FuelType.DIESEl, FuelType.BENZOL];
+  public fuelTypes: ISelectOption[] = [{
+    value: FuelType.DIESEl,
+    name: 'Diesel'
+  },
+    {
+      value: FuelType.BENZOL,
+      name: 'Benzin'
+    }];
   private settings: ISetting[] = [];
 
   constructor(private settingsService: SettingsService, private ultimap: UltimapService, private utility: UtilityService) {

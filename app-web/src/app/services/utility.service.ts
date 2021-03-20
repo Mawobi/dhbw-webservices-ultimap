@@ -15,7 +15,7 @@ export class UtilityService {
     await Toast.show({
       text: message,
       duration: 'long',
-      position: 'center'
+      position: 'bottom'
     });
   }
 }

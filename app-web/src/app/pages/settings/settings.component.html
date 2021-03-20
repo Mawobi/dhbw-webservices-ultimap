@@ -23,7 +23,7 @@
       <div *ngIf="carSetting.isConsumption" class="setting__content setting__content--input card fuelType">
         <select [(ngModel)]="carSetting.type">
           <option [value]="undefined" disabled hidden selected>Typ auswählen...</option>
-          <option *ngFor="let type of fuelTypes" [value]="type">{{ type }}</option>
+          <option *ngFor="let type of fuelTypes" [value]="type.value">{{ type.name }}</option>
         </select>
       </div>
 

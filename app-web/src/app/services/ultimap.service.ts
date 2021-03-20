@@ -78,18 +78,18 @@ export class UltimapService {
   }
 
   private async queryCarTypeAndConsumption(): Promise<ICar | undefined> {
-    const carSetting = this.settingsService.get(SettingsKey.CAR);
-    if (!carSetting || carSetting.value == null) return undefined;
+    const setting = this.settingsService.get(SettingsKey.CAR);
+    if (!setting || setting.value == null) return undefined;
 
-    const value = carSetting.value as ICarSetting;
-    if (value.isConsumption) return {consumption: value.value, typ: value.type, id: -1};
-    if (value.value == null) return undefined;
+    const carSetting = setting.value as ICarSetting;
+    if (carSetting.isConsumption) return {consumption: carSetting.value, typ: carSetting.type, id: -1};
+    if (carSetting.value == null) return undefined;
 
     try {
       const response = await this.apollo.query<IUltimapCarInfoResponse>({
         query: gql`
           {
-            carInfo(carId: ${value.value}) {
+            carInfo(carId: ${carSetting.value}) {
               id, consumption, typ
             }
           }

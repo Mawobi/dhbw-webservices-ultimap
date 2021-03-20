@@ -1,0 +1,64 @@
+version: '3.8'
+services:
+  ultimap-webapp:
+    image: registry.gitlab.com/kiliankra/dhbw_webservices_ultimap/app-web:latest
+    ports:
+      - "80:80" #TODO: Set to 7101 for final deployment
+    container_name: ultimap-webapp
+    networks:
+      - ultimap-net
+  #
+  ultimap-service-carinfo:
+    image: registry.gitlab.com/kiliankra/dhbw_webservices_ultimap/service-carinfo:latest
+    ports:
+      - 8080
+    container_name: ultimap-carinfo
+    environment:
+      ULTIMAP_API_KEY: "DUMMY" # SET THIS TO Tankerkoenig API-Key
+      DB_USER: "spring"
+      DB_PASSWORD: "changeit"
+    networks:
+      - ultimap-net
+  #
+  ultimap-service-routing:
+    image: registry.gitlab.com/kiliankra/dhbw_webservices_ultimap/service-routing:latest
+    ports:
+      - 8080
+    container_name: ultimap-routing
+    environment:
+      ULTIMAP_API_KEY: "DUMMY" # SET THIS TO ORS-API-Key
+    networks:
+      - ultimap-net
+  #
+  ultimap-service-weather:
+    image: registry.gitlab.com/kiliankra/dhbw_webservices_ultimap/service-weather:latest
+    ports:
+      - 8080
+    container_name: ultimap-weather
+    environment:
+      ULTIMAP_API_KEY: "DUMMY" # SET THIS TO OpenWeatherMaps-API-Key
+    networks:
+      - ultimap-net
+  #
+  ultimap-service-ultimap:
+    image: registry.gitlab.com/kiliankra/dhbw_webservices_ultimap/service-ultimap:latest
+    ports:
+      - 8080
+    container_name: ultimap-ultimap
+    networks:
+      - ultimap-net
+  #
+  ultimap-car-db:
+    image: registry.gitlab.com/kiliankra/dhbw_webservices_ultimap/db-car:latest
+    ports:
+      - 3306
+    container_name: ultimap-db
+    environment:
+      MYSQL_ROOT_PASSWORD: "definitivKeinTestPW"
+      MYSQL_PASSWORD: "changeit"
+    networks:
+      - ultimap-net
+
+networks:
+  ultimap-net:
+    name: ultimap-net

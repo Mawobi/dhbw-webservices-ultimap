@@ -1,0 +1,11 @@
+${AnsiColor.BRIGHT_GREEN}
+          ___       __
+         /\_ \     /\ \__    __
+ __  __  \//\ \    \ \ ,_\  /\_\     ___ ___       __      _____
+/\ \/\ \   \ \ \    \ \ \/  \/\ \  /' __` __`\   /'__`\   /\ '__`\
+\ \ \_\ \   \_\ \_   \ \ \_  \ \ \ /\ \/\ \/\ \ /\ \L\.\_ \ \ \L\ \
+ \ \____/   /\____\   \ \__\  \ \_\\ \_\ \_\ \_\\ \__/.\_\ \ \ ,__/
+  \/___/    \/____/    \/__/   \/_/ \/_/\/_/\/_/ \/__/\/_/  \ \ \/
+                                                             \ \_\
+                                                              \/_/
+${AnsiColor.CYAN}${application.title} - ${application.version}${AnsiColor.BRIGHT_GREEN} ::Spring ${spring-boot.formatted-version}${AnsiColor.DEFAULT}${AnsiBackground.DEFAULT}

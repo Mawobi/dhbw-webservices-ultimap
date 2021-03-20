@@ -1,0 +1,72 @@
+type Query {
+    # Advanced information for the route
+    routeInfo(input: UltimapInput): UltimapType
+
+    # Simple tunneling from service-carinfo
+    carInfo(carId: Int!): CarInfoType
+    carModels: [CarInfoType]!
+}
+
+enum FuelType {
+    DIESEL
+    BENZOL
+}
+
+## Input Types
+input UltimapInput {
+    geopoints: GeoInput! # Start and endpoint
+    departure : Int      # UNIX Timestamp in seconds
+    fuel: FuelInput      # Information for fuelage
+}
+
+input GeoInput {
+    start: String!   # Either address or coordinates like (59.0,14.9); Format like (lat,lon)
+    destination: String!  # Either address or coordinates like (59.0,14.9)
+}
+
+input FuelInput {
+    consumption: Float!,
+    typ: FuelType!
+}
+
+## Response types
+type UltimapType {
+    route: RouteInfoType!
+    costs: CarCostInfoType  # May be null if information is missing
+    weather: WeatherInfoType
+}
+
+type RouteInfoType {
+    start: String!   # Either address or coordinates like (59.0,14.9); Format like (lat,lon)
+    destination: String!  # Either address or coordinates like (59.0,14.9)
+
+    duration: Int!               # The estimated duration in minutes
+    distance: Int!               # The calculated distance in metres
+    waypoints: [CoordinateType] # The waypoints for the route
+}
+
+type CoordinateType {
+    lat: Float!,
+    lon: Float!
+}
+
+type CarCostInfoType {
+    totalConsumption: Float! # Estimated fuel consumption in litres
+    fuelCosts: Float!        # Estimated costs for fuel in EUR
+    wearFlatrate: Float!     # Estimated costs for general car wear in EUR
+}
+
+type WeatherInfoType {
+    min: Float!  # The lowest estimated temperature in degrees of Celsius
+    max: Float!  # The highest estimated temperature in degrees of Celsius
+    avg: Float!  # The average estimated temperature in degrees of Celsius
+
+    rain: Float!  # The percentage of estimated rain coverage
+}
+
+type CarInfoType {
+    id: Int!,           # Incremental ID
+    name: String,       # Human readable name (e.g. "VW Golf 6 GTI")
+    consumption: Float, # Consumption in litres per 100 km
+    typ: FuelType       # Consumed Fuel type
+}

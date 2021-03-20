@@ -1,0 +1,32 @@
+build-service-carinfo:
+  stage: build
+  script:
+    - ./gradlew service-carinfo:bootJar
+  artifacts:
+    paths:
+      - services-ultimap/service-carinfo/build
+  extends: .service
+
+test-service-carinfo:
+  stage: test
+  script:
+    - ./gradlew service-carinfo:check
+  artifacts:
+    paths:
+      - services-ultimap/service-carinfo/build/reports/*
+    reports:
+      junit: services-ultimap/service-carinfo/build/test-results/test/**/TEST-*.xml
+  extends: .service
+
+dockerize-service-carinfo:
+  stage: dockerize
+  image: docker:20
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD registry.gitlab.com
+    - docker build -t registry.gitlab.com/kiliankra/dhbw_webservices_ultimap/service-carinfo:latest -f Dockerfile service-carinfo
+    - docker tag registry.gitlab.com/kiliankra/dhbw_webservices_ultimap/service-carinfo:latest registry.gitlab.com/kiliankra/dhbw_webservices_ultimap/service-carinfo:${CI_COMMIT_SHORT_SHA}
+    - docker push registry.gitlab.com/kiliankra/dhbw_webservices_ultimap/service-carinfo:latest
+    - docker push registry.gitlab.com/kiliankra/dhbw_webservices_ultimap/service-carinfo:${CI_COMMIT_SHORT_SHA}
+  extends:
+    - .service
+    - .deployment

@@ -1,3 +1,4 @@
 export const environment = {
-  production: true
+  production: true,
+  ultimapUrl: (window as any).env.ultimapUrl || 'http://server.menkalian.de/graphql'
 };

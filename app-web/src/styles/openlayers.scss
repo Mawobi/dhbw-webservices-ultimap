@@ -1,0 +1,21 @@
+@import "https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css";
+
+// remove map OpenStreetMap contributor note in the map corner
+.ol-attribution.ol-uncollapsible {
+  display: none;
+}
+
+// change background color of map zoom buttons
+.ol-control button {
+  background-color: rgba(var(--um-color-primary-rgb), .75);
+  outline: 0;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(var(--um-color-primary-rgb), .9);
+  }
+
+  &:active, &:focus {
+    background-color: rgba(var(--um-color-primary-rgb), .6);
+  }
+}

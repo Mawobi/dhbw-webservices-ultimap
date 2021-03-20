@@ -1,0 +1,77 @@
+.content {
+  padding: 60px 30px;
+}
+
+.settings {
+  display: grid;
+  gap: 20px;
+  padding-top: 20px;
+}
+
+.setting {
+  label {
+    display: block;
+    padding-bottom: 6px;
+  }
+
+  &__content {
+    border: 1px solid var(--um-color-border);
+    padding: 12px;
+    width: fit-content;
+    max-width: 100%;
+
+    &--input {
+      padding: 0;
+
+      input, select {
+        padding: 12px;
+        width: 100%;
+      }
+    }
+
+    input, select {
+      border: none;
+      background: transparent;
+      font-size: 15px;
+    }
+  }
+
+  &__description {
+    padding-top: 20px;
+  }
+}
+
+.save-btn {
+  margin: 80px auto 0 auto;
+
+  @media only screen and (min-width: 768px) {
+    margin: 80px 0 0 0;
+  }
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  padding-top: 10px;
+
+  label {
+    margin-right: 10px;
+  }
+}
+
+.fuelType {
+  margin-top: 10px;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  padding-bottom: 40px;
+  cursor: pointer;
+  width: fit-content;
+
+  ion-icon {
+    margin-right: 10px;
+  }
+}

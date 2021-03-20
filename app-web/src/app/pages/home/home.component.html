@@ -1,0 +1,9 @@
+<app-map></app-map>
+
+<app-map-searchbar class="searchbar"></app-map-searchbar>
+<app-map-summary class="summary"></app-map-summary>
+
+<div class="map-buttons">
+  <app-icon-card icon="cog" routerLink="/settings"></app-icon-card>
+  <app-icon-card (click)="setCenterToUser()" icon="navigate"></app-icon-card>
+</div>

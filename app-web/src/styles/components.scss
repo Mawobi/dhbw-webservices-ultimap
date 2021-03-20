@@ -1,0 +1,53 @@
+.card {
+  box-shadow: var(--um-box-shadow);
+  border-radius: var(--um-border-radius);
+  background: var(--um-color-background);
+}
+
+.bubble {
+  box-shadow: var(--um-box-shadow);
+  background: var(--um-color-background);
+  width: fit-content;
+  padding: 6px 12px;
+  border-radius: 50px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 550px;
+
+  &__remove {
+    display: inline-block;
+    cursor: pointer;
+
+    &:after {
+      content: "x";
+      color: red;
+      position: relative;
+      top: -4px;
+      right: -4px;
+    }
+  }
+}
+
+.btn {
+  background: var(--um-color-primary);
+  border-radius: var(--um-border-radius);
+  padding: 12px 30px;
+  width: fit-content;
+  color: #ffffff;
+  box-shadow: var(--um-box-shadow);
+  cursor: pointer;
+  transition: all 0.4s;
+
+  &:hover {
+    background: var(--um-color-primary-hover);
+    transform: scale(1.1);
+  }
+
+  &:active {
+    background: var(--um-color-primary-active);
+  }
+
+  &--chip {
+    border-radius: 50px;
+  }
+}

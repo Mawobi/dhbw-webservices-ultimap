@@ -1,5 +1,5 @@
 .web:
-  image: ubuntu
+  image: node:14-alpine
   before_script:
     - cd app-web
   cache:
@@ -10,19 +10,12 @@
 build-app-web:
   stage: build
   script:
-    - echo "building Webapp"
+    - npm install
+    - npm install -g @angular/cli
+    - ng build --prod --output-path=/dist
   artifacts:
     paths:
-      - app-web/public
-  extends: .web
-
-test-app-web:
-  stage: test
-  script:
-    - echo "testing Webapp"
-  artifacts:
-    paths:
-      - app-web/public
+      - app-web/dist
   extends: .web
 
 dockerize-app-web:

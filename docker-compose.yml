@@ -3,8 +3,10 @@ services:
   ultimap-webapp:
     image: registry.gitlab.com/kiliankra/dhbw_webservices_ultimap/app-web:latest
     ports:
-      - "80:80" #TODO: Set to 7101 for final deployment
+      - "80" #TODO: Set to 7101 for final deployment
     container_name: ultimap-webapp
+    environment:
+      ULTIMAP_URL: "http://server.menkalian.de:80/graphql"
     networks:
       - ultimap-net
   #

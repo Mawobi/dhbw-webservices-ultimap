@@ -69,12 +69,12 @@ public class UltimapDataFetcher {
             throw new DgsEntityNotFoundException("Something went wrong when looking up the weather");
         }
 
-        log.info("Calculated routeInfo: {}", toReturn);
+        log.debug("Calculated routeInfo: {}", toReturn);
         return toReturn;
     }
 
     private CarCostInfoType calculateCosts(UltimapInput input, RouteType receivedRoute) {
-        log.info("Calculating costs for Route '{}'", receivedRoute);
+        log.debug("Calculating costs for Route '{}'", receivedRoute);
         if (input.getFuel() == null) {
             log.warn("Received no fuel-parameter");
             return null;

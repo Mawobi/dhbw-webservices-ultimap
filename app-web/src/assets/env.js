@@ -2,5 +2,5 @@
   window["env"] = window["env"] || {};
 
   // Environment variables
-  window["env"]["ultimapUrl"] = "http://server.menkalian.de/graphql";
+  window["env"]["ultimapUrl"] = "http://server.menkalian.de:8080/graphql";
 })(this);

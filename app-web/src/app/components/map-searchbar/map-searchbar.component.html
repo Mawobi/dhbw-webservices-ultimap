@@ -12,10 +12,7 @@
   </div>
 
   <div *ngIf="!request.start || !request.destination" class="card searchbar">
-    <input (keypress)="setStart($event)" *ngIf="!request.start" placeholder="Startadresse...">
-    <input (keypress)="setDestination($event)" *ngIf="request.start && !request.destination"
-           placeholder="Zieladresse...">
-
-    <ion-icon (click)="queryRoute()" name="search"></ion-icon>
+    <input #input (keypress)="inputData($event)" placeholder="Startadresse...">
+    <ion-icon (click)="inputData()" name="search"></ion-icon>
   </div>
 </div>

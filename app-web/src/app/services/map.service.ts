@@ -12,6 +12,7 @@ import VectorLayer from 'ol/layer/Vector';
 import {Icon, Stroke, Style} from 'ol/style';
 import IconAnchorUnits from 'ol/style/IconAnchorUnits';
 import {Plugins} from '@capacitor/core';
+import {MarkerType} from '../../types/map';
 
 const {Geolocation} = Plugins;
 
@@ -20,7 +21,6 @@ const {Geolocation} = Plugins;
 })
 export class MapService {
   private static readonly ROUTE_LAYER_NAME = 'route-path';
-  private static readonly MARKER_LAYER_NAME = 'user-geolocation';
   private static readonly ZOOM_DEFAULT = 16;
   private readonly map: Map;
 
@@ -109,30 +109,44 @@ export class MapService {
   }
 
   /**
-   * Displays a marker on the map at the given waypoint.
+   * Displays a marker with the given type on the map at the given waypoint.
    * @param waypoint The waypoint to position the marker to.
+   * @param type The marker type to add.
    * @private
    */
-  public addMarker(waypoint: IWaypoint): void {
+  public addMarker(waypoint: IWaypoint, type: MarkerType): void {
     const marker = new Feature({
       geometry: new Point(fromLonLat([waypoint.lon, waypoint.lat])),
     });
+
+    let src;
+
+    switch (type) {
+      case MarkerType.START:
+        src = 'assets/marker-start.png';
+        break;
+      case MarkerType.DESTINATION:
+        src = 'assets/marker-destination.png';
+        break;
+      default:
+        src = 'assets/marker.png';
+    }
 
     const iconStyle = new Style({
       image: new Icon({
         anchor: [0.5, 46],
         anchorXUnits: IconAnchorUnits.FRACTION,
         anchorYUnits: IconAnchorUnits.PIXELS,
-        src: 'assets/marker.png',
+        src,
       }),
     });
 
     marker.setStyle(iconStyle);
 
     const source = new VectorSource({features: [marker]});
-    const markerLayer = new VectorLayer({source, className: MapService.MARKER_LAYER_NAME, zIndex: 2});
+    const markerLayer = new VectorLayer({source, className: `marker-type-${type}`, zIndex: 2});
 
-    this.removeMarker();
+    this.removeMarker(type);
     this.map.addLayer(markerLayer);
   }
 
@@ -162,11 +176,12 @@ export class MapService {
   }
 
   /**
-   * Removes the currently displayed marker from the map if one exists.
+   * Removes the currently displayed marker with the given type from the map if one exists.
+   * @param type The marker type to remove.
    */
-  public removeMarker(): void {
+  public removeMarker(type: MarkerType): void {
     for (const layer of this.map.getLayers().getArray()) {
-      if (layer.getClassName() === MapService.MARKER_LAYER_NAME) {
+      if (layer.getClassName() === `marker-type-${type}`) {
         this.map.removeLayer(layer);
         break;
       }

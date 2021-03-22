@@ -10,7 +10,7 @@
 
       <div class="iconItem">
         <ion-icon name="stopwatch-outline"></ion-icon>
-        <span>{{ routeInfo.route.duration / 60 | number:"1.0-0" }} Minuten</span>
+        <span>{{ formatDuration(routeInfo.route.duration / 60) }}</span>
       </div>
     </div>
 

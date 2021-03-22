@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  ultimapUrl: (window as any).env.ultimapUrl || 'http://server.menkalian.de/graphql'
+  ultimapUrl: (window as any).env.ultimapUrl || 'http://server.menkalian.de:8080/graphql'
 };
 
 /*

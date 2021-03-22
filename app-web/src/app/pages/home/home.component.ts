@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {MapService} from '../../services/map.service';
+import {MarkerType} from '../../../types/map';
 
 @Component({
   selector: 'app-home',
@@ -13,6 +14,6 @@ export class HomeComponent {
 
   public async setCenterToUser(): Promise<void> {
     const waypoint = await this.map.setCenterToUser();
-    if (waypoint) this.map.addMarker(waypoint);
+    if (waypoint) this.map.addMarker(waypoint, MarkerType.USER_LOCATION);
   }
 }

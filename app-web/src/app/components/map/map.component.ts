@@ -2,6 +2,7 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {UltimapService} from '../../services/ultimap.service';
 import {IRouteInfo} from '../../../types/route';
 import {MapService} from '../../services/map.service';
+import {MarkerType} from '../../../types/map';
 
 
 @Component({
@@ -28,7 +29,7 @@ export class MapComponent implements OnInit {
       // center map to user location and add marker if no route is active
       if (!this.routeInfo) {
         this.map.setCenterToUser().then(userLocation => {
-          if (userLocation) this.map.addMarker(userLocation);
+          if (userLocation) this.map.addMarker(userLocation, MarkerType.USER_LOCATION);
         });
       }
     }, 0);
@@ -42,9 +43,11 @@ export class MapComponent implements OnInit {
     this.map.displayRoute(waypoints ?? []);
 
     if (waypoints && waypoints.length > 0) {
-      this.map.addMarker(waypoints[waypoints.length - 1]);
+      this.map.addMarker(waypoints[0], MarkerType.START);
+      this.map.addMarker(waypoints[waypoints.length - 1], MarkerType.DESTINATION);
     } else {
-      this.map.removeMarker();
+      this.map.removeMarker(MarkerType.START);
+      this.map.removeMarker(MarkerType.DESTINATION);
     }
   }
 }

@@ -24,6 +24,15 @@ export class MapSummaryComponent {
     if (!waypoints || waypoints.length === 0) return;
 
     this.map.setCenter(waypoints[waypoints.length - 1]);
-    this.map.addMarker(waypoints[waypoints.length - 1]);
+  }
+
+  public formatDuration(minutes: number): string {
+    const mins = Math.floor(minutes % 60);
+    const hours = Math.floor(minutes / 60);
+
+    const minsString = mins < 10 ? `0${mins}` : mins.toString();
+    const hoursString = hours < 10 ? `0${hours}` : hours.toString();
+
+    return `${hoursString}:${minsString} h`;
   }
 }

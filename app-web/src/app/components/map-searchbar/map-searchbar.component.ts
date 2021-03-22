@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, ElementRef, ViewChild} from '@angular/core';
 import {IUltimapRequest} from '../../../types/graphQL';
 import {UltimapService} from '../../services/ultimap.service';
 import {UtilityService} from '../../services/utility.service';
@@ -9,6 +9,7 @@ import {UtilityService} from '../../services/utility.service';
   styleUrls: ['./map-searchbar.component.scss']
 })
 export class MapSearchbarComponent {
+  @ViewChild('input') input: ElementRef<HTMLInputElement> | undefined;
   public request: IUltimapRequest = {
     start: '',
     destination: ''
@@ -21,32 +22,6 @@ export class MapSearchbarComponent {
         this.request.destination = routeInfo.route.destination;
       }
     });
-  }
-
-  /**
-   * Sets the request start to the input value if enter was pressed.
-   * @param ev The key press event.
-   */
-  public setStart(ev: KeyboardEvent): void {
-    if (ev.key !== 'Enter') return;
-    const input = (ev.target as HTMLInputElement);
-    this.request.start = input.value;
-    input.value = '';
-
-    this.queryRoute();
-  }
-
-  /**
-   * Sets the request destination to the input value if enter was pressed.
-   * @param ev The key press event.
-   */
-  public setDestination(ev: KeyboardEvent): void {
-    if (ev.key !== 'Enter') return;
-    const input = (ev.target as HTMLInputElement);
-    this.request.destination = input.value;
-    input.value = '';
-
-    this.queryRoute();
   }
 
   /**
@@ -73,6 +48,11 @@ export class MapSearchbarComponent {
    */
   public removeStart(): void {
     this.request.start = '';
+    if (this.input) {
+      const input = this.input.nativeElement;
+      input.disabled = false;
+      input.placeholder = 'Startadresse...';
+    }
     this.ultimap.removeRoute();
   }
 
@@ -81,6 +61,35 @@ export class MapSearchbarComponent {
    */
   public removeDestination(): void {
     this.request.destination = '';
+    if (this.input) {
+      const input = this.input.nativeElement;
+      input.disabled = false;
+
+      if (this.request.start) input.placeholder = 'Zieladresse...';
+    }
     this.ultimap.removeRoute();
+  }
+
+  public inputData(ev?: KeyboardEvent): void {
+    if (!this.input) return;
+    if (ev && ev.key !== 'Enter') return;
+
+    const input = this.input.nativeElement;
+
+    const value = input.value;
+    if (!this.request.start) {
+      this.request.start = value;
+      input.placeholder = 'Zieladresse...';
+      input.focus();
+    } else if (!this.request.destination) {
+      this.request.destination = value;
+      input.placeholder = '';
+      input.disabled = true;
+    } else {
+      input.disabled = true;
+    }
+
+    this.queryRoute();
+    input.value = '';
   }
 }

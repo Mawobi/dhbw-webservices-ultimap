@@ -1,6 +1,6 @@
 {
   "appId": "com.dhbw.ultimap",
-  "appName": "Ultimap",
+  "appName": "UltiMap",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "dist",

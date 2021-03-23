@@ -26,7 +26,7 @@ export class UltimapService {
    * @returns Promise that returns true of route could be fetched, false otherwise.
    */
   public async queryRouteInfo(request: IUltimapRequest): Promise<boolean> {
-    const fuelInput = await this.queryCarTypeAndConsumption();
+    const fuelInput = await this.querySavedCarFromSetting();
 
     try {
       const response = await this.apollo.query<IUltimapRouteResponse>({
@@ -60,6 +60,10 @@ export class UltimapService {
     if (this.routeInfoBs.value) this.routeInfoBs.next(undefined);
   }
 
+  /**
+   * Queries all available cars from the UltiMap Backend Service.
+   * @returns Promise that contains all car information or an empty array if an error occurred.
+   */
   public async queryCars(): Promise<ICar[]> {
     try {
       const response = await this.apollo.query<IUltimapCarModelResponse>({
@@ -77,13 +81,17 @@ export class UltimapService {
     }
   }
 
-  private async queryCarTypeAndConsumption(): Promise<ICar | undefined> {
+  /**
+   * Queries the car information for the saved car model in the settings.
+   * @returns Promise with the car information or undefined if no setting exists or an error occurred.
+   */
+  private async querySavedCarFromSetting(): Promise<ICar | undefined> {
     const setting = this.settingsService.get(SettingsKey.CAR);
     if (!setting || setting.value == null) return undefined;
 
     const carSetting = setting.value as ICarSetting;
-    if (carSetting.isConsumption) return {consumption: carSetting.value, typ: carSetting.type, id: -1};
     if (carSetting.value == null) return undefined;
+    if (carSetting.isConsumption) return {consumption: carSetting.value, typ: carSetting.type, id: -1};
 
     try {
       const response = await this.apollo.query<IUltimapCarInfoResponse>({

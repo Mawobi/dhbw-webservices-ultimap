@@ -14,13 +14,13 @@
       </div>
     </div>
 
-    <div class="row--50">
-      <div *ngIf="routeInfo.costs" class="iconItem">
+    <div *ngIf="routeInfo.costs" class="row--50">
+      <div class="iconItem">
         <ion-icon name="cash-outline"></ion-icon>
         <span>{{ routeInfo.costs.fuelCosts + routeInfo.costs.wearFlatrate | currency:"EUR" }}</span>
       </div>
 
-      <div *ngIf="routeInfo.costs" class="iconItem">
+      <div class="iconItem">
         <ion-icon name="flame-outline"></ion-icon>
         <span>{{ routeInfo.costs.totalConsumption | number:"1.0-1" }} Liter</span>
       </div>
@@ -28,9 +28,8 @@
 
     <div *ngIf="routeInfo.weather" class="iconItem">
       <ion-icon name="thermometer-outline"></ion-icon>
-      <span>{{ routeInfo.weather.avg | number:"1.0-1" }}°C ({{ routeInfo.weather.min | number:"1.0-1" }}
-        °C bis {{ routeInfo.weather.max | number:"1.0-1" }}
-        °C)</span>
+      <span>{{ routeInfo.weather.avg | number:"1.0-1" }}°C ({{ routeInfo.weather.min | number:"1.0-1"
+        }}°C bis {{ routeInfo.weather.max | number:"1.0-1" }}°C)</span>
     </div>
 
     <div *ngIf="routeInfo.weather" class="iconItem">

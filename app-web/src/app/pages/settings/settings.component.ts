@@ -17,6 +17,7 @@ interface ISelectOption {
   styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent {
+  private static readonly MAX_LITER = 50;
   public carSetting: ICarSetting = {value: undefined, isConsumption: false};
   public availableCars: ICar[] = [];
   public fuelTypes: ISelectOption[] = [{
@@ -45,6 +46,11 @@ export class SettingsComponent {
     if (this.carSetting == null) return;
     if (this.carSetting.isConsumption && (this.carSetting.value == null || !this.carSetting.type)) {
       await this.utility.showToast('Bitte fülle alle Felder aus.');
+      return;
+    }
+
+    if (this.carSetting.isConsumption && this.carSetting.value && this.carSetting.value > SettingsComponent.MAX_LITER) {
+      await this.utility.showToast(`Bitte gebe einen realistischen Verbrauch kleiner gleich ${SettingsComponent.MAX_LITER} Liter ein.`);
       return;
     }
 

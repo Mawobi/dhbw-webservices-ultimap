@@ -29,6 +29,10 @@ export class MapSearchbarComponent {
    */
   public async queryRoute(): Promise<void> {
     if (!this.request.start || !this.request.destination) return;
+    if (this.request.start === this.request.destination) {
+      await this.utility.showToast('Die Start- und Zieladresse sind identisch. Bitte gib unterschiedliche Adressen ein.');
+      return;
+    }
 
     await this.utility.showToast('Route wird berechnet...');
     console.log(`Query route for start ${this.request.start} and destination ${this.request.destination}`);
@@ -89,7 +93,7 @@ export class MapSearchbarComponent {
       input.disabled = true;
     }
 
-    this.queryRoute();
     input.value = '';
+    this.queryRoute();
   }
 }

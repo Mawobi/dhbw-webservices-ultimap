@@ -92,7 +92,6 @@ export class UltimapService {
     const carSetting = setting.value as ICarSetting;
     if (carSetting.value == null) return undefined;
     if (carSetting.isConsumption) return {consumption: carSetting.value, typ: carSetting.type, id: -1};
-
     try {
       const response = await this.apollo.query<IUltimapCarInfoResponse>({
         query: gql`

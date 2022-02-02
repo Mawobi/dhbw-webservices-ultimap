@@ -69,7 +69,7 @@ subprojects {
                 add("testImplementation", "org.springframework.boot:spring-boot-starter-test")
 
                 // GraphQL
-                add("implementation", "com.netflix.graphql.dgs:graphql-dgs-spring-boot-starter:latest.release")
+                add("implementation", "com.netflix.graphql.dgs:graphql-dgs-spring-boot-starter:4.0.1")
 
                 // Lombok
                 add("compileOnly", "org.projectlombok:lombok")

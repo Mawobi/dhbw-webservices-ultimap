@@ -3,17 +3,6 @@
   before_script:
     - cd app-web
 
-build-app-web:
-  stage: build
-  script:
-    - npm install
-    - npm install -g @angular/cli
-    - ng build --prod --output-path=./dist
-  artifacts:
-    paths:
-      - app-web/dist
-  extends: .web
-
 dockerize-app-web:
   stage: dockerize
   image: docker:20
